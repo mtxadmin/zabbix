@@ -1,4 +1,4 @@
 # zabbix
 Zabbix templates, scripts etc
 
-See folders for information.
+See folders for information
