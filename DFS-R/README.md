@@ -1,27 +1,29 @@
-Script to monitor DFS-R queues. 
+## Script to monitor DFS-R queues.
 
 The script sends length of replication queues (Microsoft: "DFS-R backlog count") to Zabbix.
 
+Script detects all DFS-R folders on server, and automatically makes all items on Zabbix server through API. You don't have to make them manually.
 
-Installation:
+
+## Installation:
 
 1. Copy files DFS-R_backlog.ps1 and functions_zabbix.ps1 to any folders on DFS-R server (one of)
 
 2. Run script DFS-R_backlog.ps1 with elevated permissions and check for errors. 
-	Easiest way for that: 
-	Run Powershell ISE "as administrator" (from context menu)
-	Open DFS-R_backlog.ps1
-	Edit first line of script with $zabbix_server_url variable. Save script.
-	Tailor function Zabbix-GetProxyByHostname for your infrastructure.
-	Set $user and $password variables in command line. They only need in setup run, do not add them to script for security reasons. 
-	Run DFS-R_backlog.ps1
-	Check for errors
-Script will detect all DFS-R folders and add appropriate keys in zabbix (via Zabbix API)
+    Easiest way for that: 
+    - Run Powershell ISE "as administrator" (from context menu)
+    - Open DFS-R_backlog.ps1
+    - Edit first line of script with $zabbix_server_url variable. Save script.
+    - Tailor function Zabbix-GetProxyByHostname for your infrastructure and naming conventions.
+    - Set $user and $password variables in command line. They only need in setup run, do not add them to script for security reasons. 
+    - Run DFS-R_backlog.ps1
+    - Check for errors
+    - Script will detect all DFS-R folders and add appropriate keys in zabbix (via Zabbix API)
 
 3. Add script to Windows task scheduler:
 	"Create Task.."
 	
-	In General tab:
+    - In General tab:
 		Name: enter any task name as you wish. For instance: "DFS-R backlog monitoring"
 
 		"When running the task, use the following user account:"
