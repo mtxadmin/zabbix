@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-04-02T15:48:46Z</date>
+    <date>2021-04-02T15:54:09Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -958,7 +958,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Delivery Queue Per Minute</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Delivery Queue Per Minute&quot;,10]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Delivery Queue Per Minute&quot;,10]</key>
                     <delay>30</delay>
                     <value_type>FLOAT</value_type>
                     <units>Message(s)</units>
@@ -972,7 +972,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Message Count In Delay Queue</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Delay Queue&quot;]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Message Count In Delay Queue&quot;]</key>
                     <delay>30</delay>
                     <units>Message(s)</units>
                     <description>Is in Exchange 2016 performance counters</description>
@@ -985,7 +985,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Message Count In Delivery Queue</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Delivery Queue&quot;]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Message Count In Delivery Queue&quot;]</key>
                     <delay>30</delay>
                     <units>Message(s)</units>
                     <description>Is in Exchange 2016 performance counters</description>
@@ -998,7 +998,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Message Count In Poison Queue</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Poison Queue&quot;]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Message Count In Poison Queue&quot;]</key>
                     <delay>30</delay>
                     <units>Message(s)</units>
                     <description>Is in Exchange 2016 performance counters</description>
@@ -1011,7 +1011,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Message Count In Submission Queue</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Submission Queue&quot;]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Message Count In Submission Queue&quot;]</key>
                     <delay>30</delay>
                     <units>Message(s)</units>
                     <description>Is in Exchange 2016 performance counters</description>
@@ -1024,7 +1024,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Message Count In Unreachable Queue</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Unreachable Queue&quot;]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Message Count In Unreachable Queue&quot;]</key>
                     <delay>30</delay>
                     <units>Message(s)</units>
                     <description>Is in Exchange 2016 performance counters</description>
@@ -1037,7 +1037,7 @@ Is in Exchange 2016 performance counters</description>
                 <item>
                     <name>Control Flow Submission Queue Per Minute</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Submission Queue Per Minute&quot;,10]</key>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm\Control Flow Submission Queue Per Minute&quot;,10]</key>
                     <delay>30</delay>
                     <value_type>FLOAT</value_type>
                     <units>Message(s)</units>
