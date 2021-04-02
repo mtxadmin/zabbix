@@ -21,26 +21,25 @@ Script detects all DFS-R folders on server, and automatically makes all items on
     - Script will detect all DFS-R folders and add appropriate keys in zabbix (via Zabbix API)
 
 3. Add script to Windows task scheduler:
-	"Create Task.."
+    "Create Task.."
 	
     - In General tab:
-		Name: enter any task name as you wish. For instance: "DFS-R backlog monitoring"
+	Name: enter any task name as you wish. For instance: "DFS-R backlog monitoring"
 
-		"When running the task, use the following user account:"
-		Enter account with sufficient permissions for reading DFS-R data
-		DO NOT set chechbox "Do not store password"
-		Please note that NT AUTHORITY/SYSTEM will not work
+	"When running the task, use the following user account:"
+	Enter account with sufficient permissions for reading DFS-R data
+	DO NOT set chechbox "Do not store password"
+	Please note that NT AUTHORITY/SYSTEM will not work
 	
-	    "Run whether user is logged on or not"
+	"Run whether user is logged on or not"
 
 	"Run with highest privileges"
 
 	Configure for: set latest version
 
 
-In Triggers tab:
-
-"New..."
+    - In Triggers tab:
+        "New..."
 Begin task: On a schedule (default)
 One time (default)
 Repeat task every: 5 minutes (it is the minimum. You can set another value if you like)
