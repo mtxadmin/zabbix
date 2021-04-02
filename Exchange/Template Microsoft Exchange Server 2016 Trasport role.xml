@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-04-02T15:48:46Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Microsoft Exchange Server 2016 Trasport role</template>
+            <name>Template Microsoft Exchange Server 2016 Trasport role</name>
+            <description>Transport queues: &#13;
+https://www.activexperts.com/admin/exchange/transport-server/microsoft-exchange-transport-server-transport-queue-length/&#13;
+&#13;
+and performance monitor&#13;
+&#13;
+Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchange</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Exchange Transport</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Active Mailbox Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Mailbox Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the active mailbox queues&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Active Mailbox Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Active Mailbox Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Mailbox Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Active Mailbox Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Active Non-Smtp Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Non-Smtp Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the drop directory used by a Foreign connector&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Active Non-Smtp Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Active Non-Smtp Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Non-Smtp Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Active Non-Smtp Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Active Remote Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Remote Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the active remote delivery queues</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Active Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Active Remote Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Active Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Aggregate Delivery Queue Length (All Queues)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Delivery Queue Length (All Queues)&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages queued for delivery in all queues</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Aggregate Delivery Queue Length (All Queues)</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Aggregate Delivery Queue Length (All Queues)</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Delivery Queue Length (All Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Aggregate Delivery Queue Length (All Queues)</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Aggregate Shadow Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Shadow Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Delay Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Delay Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>External Active Remote Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Active Remote Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>External Aggregate Delivery Queue Length (All External Queues)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Aggregate Delivery Queue Length (All External Queues)&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>External Largest Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>External Largest Unlocked Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Unlocked Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>External Retry Remote Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Retry Remote Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Internal Active Remote Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Active Remote Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Internal Aggregate Delivery Queue Length (All Internal Queues)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Aggregate Delivery Queue Length (All Internal Queues)&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Internal Largest Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Internal Largest Unlocked Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Unlocked Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Internal Retry Remote Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Retry Remote Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Completed Delivery Per Second</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Completed Delivery Per Second&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Completed Delivery Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Completed Delivery Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Deleted By Admin Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Deleted By Admin Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Queued For Delivery Expired Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Queued For Delivery Expired Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Queued For Delivery Per Second</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Queued For Delivery Per Second&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Queued For Delivery Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Queued For Delivery Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Items Resubmitted Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Items Resubmitted Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Largest Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Largest Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the largest delivery queues</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Largest Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Largest Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Largest Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Locks Expired In Delivery Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Locks Expired In Delivery Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Completed Delivery Per Second</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Completed Delivery Per Second&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Completed Delivery Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Completed Delivery Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Completing Categorization</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Completing Categorization&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Deferred during Categorization</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Deferred during Categorization&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Delayed Per Second</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Delayed Per Second&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Delayed Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Delayed Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Queued For Delivery</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Queued For Delivery&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Queued For Delivery Per Second</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Queued For Delivery Per Second&quot;]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Queued For Delivery Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Queued For Delivery Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Resubmitted During Categorization</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Resubmitted During Categorization&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Submitted Per Second</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Submitted Per Second&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Submitted Recently</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Submitted Recently&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Messages Submitted Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Messages Submitted Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Poison Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Poison Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the poison message queue&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Poison Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Poison Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Poison Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Poison Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Retry Mailbox Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Mailbox Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in a retry state attempting to deliver a message to a remote mailbox&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Retry Mailbox Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Retry Mailbox Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Mailbox Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Retry Mailbox Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Retry Non-Smtp Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Non-Smtp Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in a retry state in the non-SMTP gateway delivery queues&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Retry Non-Smtp Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Retry Non-Smtp Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Non-Smtp Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Retry Non-Smtp Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Retry Remote Delivery Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Remote Delivery Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in a retry state in the remote delivery queues</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Retry Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Retry Remote Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Retry Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Shadow Queue Auto Discards Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Shadow Queue Auto Discards Total&quot;]</key>
+                    <delay>10</delay>
+                    <units>Message(s)</units>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Shadow Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Shadow Queue Length&quot;]</key>
+                    <delay>10</delay>
+                    <units>Message(s)</units>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Submission Queue Deferred Message Count</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Deferred Message Count&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Submission Queue Items Expired Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Items Expired Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Submission Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Length&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the submission queue&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Submission Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Submission Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Submission Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Submission Queue Locked Message Count</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Locked Message Count&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Submission Queue Locks Expired Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Locks Expired Total&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Throttled Fork Agent Queued Messages</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Throttled Fork Agent Queued Messages&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Throttled Fork Agent Queued Recipients</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Throttled Fork Agent Queued Recipients&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Total Extra Connections for Idle Queues</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Total Extra Connections for Idle Queues&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>From Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Unreachable Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues(_total)\Unreachable Queue Length&quot;]</key>
+                    <delay>10</delay>
+                    <units>Message(s)</units>
+                    <description>Shows the number of messages in the Unreachable queue&#13;
+&#13;
+Is in Exchange 2016 performance counters</description>
+                    <inventory_link>TAG</inventory_link>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Unreachable Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Unreachable Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Unreachable Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Unreachable Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Control Flow Delivery Queue Per Minute</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Delivery Queue Per Minute&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Control Flow Message Count In Delay Queue</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Delay Queue&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Control Flow Message Count In Delivery Queue</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Delivery Queue&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Control Flow Message Count In Poison Queue</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Poison Queue&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Control Flow Message Count In Submission Queue</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Submission Queue&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Control Flow Message Count In Unreachable Queue</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Message Count In Unreachable Queue&quot;]</key>
+                    <delay>30</delay>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Control Flow Submission Queue Per Minute</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchangeTransport Queues Cfm(_total)\Control Flow Submission Queue Per Minute&quot;,10]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <units>Message(s)</units>
+                    <description>Is in Exchange 2016 performance counters</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$EXCHANGE_TRANSPORT_QUEUES_AVG}</macro>
+                    <value>75</value>
+                </macro>
+                <macro>
+                    <macro>{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</macro>
+                    <value>150</value>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
