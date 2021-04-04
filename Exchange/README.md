@@ -1,10 +1,6 @@
 
-Exchange transport queues
+## Zabbix template to monitor Microsoft Exchange transport queues
 
-See 
-https://www.activexperts.com/admin/exchange/transport-server/microsoft-exchange-transport-server-transport-queue-length/
-
-and performance monitor
-
+Format: zabbix 5.0 xml
 
 Tested on Exchange 2016
