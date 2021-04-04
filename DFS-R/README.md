@@ -48,8 +48,7 @@ Script detects all DFS-R folders on server, and automatically makes all items on
         Stop task if it runs longer than: 30 minutes (this is optional parameter, just in case)<br>
         Enabled (default)
 
-    - In Actions tab:
-
+    - In Actions tab:<br>
         "New..."
 
         Action: Start a program<br>
