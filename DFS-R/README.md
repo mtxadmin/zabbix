@@ -9,8 +9,8 @@ Script detects all DFS-R folders on server, and automatically makes all items on
 
 1. Copy files DFS-R_backlog.ps1 and functions_zabbix.ps1 to any folders on DFS-R server (one of)
 
-2. Run script DFS-R_backlog.ps1 with elevated permissions and check for errors. 
-    Easiest way for that: 
+2. Run script DFS-R_backlog.ps1 with elevated permissions and check for errors.<br>
+    - Login to server with account which has sufficient permissions for reading DFS-R data
     - Run Powershell ISE "as administrator" (from context menu)
     - Open DFS-R_backlog.ps1
     - Edit first line of script with $zabbix_server_url variable. Save script.
@@ -20,15 +20,13 @@ Script detects all DFS-R folders on server, and automatically makes all items on
     - Check for errors
     - Script will detect all DFS-R folders and add appropriate keys in zabbix (via Zabbix API)
 
-3. Add script to Windows task scheduler:
-
+3. Add script to Windows task scheduler:<br>
     "Create Task.."
 
-    - In General tab:
-	
+    - In General tab:<br>
 	Name: enter any task name as you wish. For instance: "DFS-R backlog monitoring"
 
-	- "When running the task, use the following user account:"<br>
+	"When running the task, use the following user account:"<br>
 	Enter account with sufficient permissions for reading DFS-R data<br>
 	DO NOT set chechbox "Do not store password"<br>
 	Please note that NT AUTHORITY/SYSTEM will not work
@@ -40,8 +38,7 @@ Script detects all DFS-R folders on server, and automatically makes all items on
 	- Configure for: set latest version
 
 
-    - In Triggers tab:
-
+    - In Triggers tab:<br>
         "New..."
 	
         Begin task: On a schedule (default)<br>
@@ -61,8 +58,7 @@ Script detects all DFS-R folders on server, and automatically makes all items on
         Add arguments (optional): -NoProfile -ExecutionPolicy Bypass -File "c:\zabbix\scripts\DFS-R_backlog.ps1" -Mode "Scheduler"<br>
         (edit path to script here. And this is NOT optional :-) )<br>
 
-    - In Settings tab:
-
+    - In Settings tab:<br>
 	Stop the task if it runs longer than: 1 hour (this is optional parameter, just in case)
 
     After clicking OK don't forget to enter (correct!) password to account
