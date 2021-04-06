@@ -70,6 +70,16 @@ $folders | % {
                 Write-Host "Item key: "  -ForegroundColor Green -NoNewline; Write-Host $item_key
                 Write-Host ("Count: " + $backlog_count)
 
+                $item_value_type = 3
+                <#
+                value_type:
+                0 - numeric float;
+                1 - character;
+                2 - log;
+                3 - numeric unsigned;
+                4 - text.
+                #>
+                
                 switch ($Mode) {
                     "Setup" {
                         if (-not $token) { $token = Zabbix-GetAuthToken -User $user -Password $password }
@@ -81,10 +91,9 @@ $folders | % {
 
                     "Scheduler" {
                         # Keys should be added to zabbix already by setup mode.
-                        $log_filename = "$root\DFS.log"
                         $zabbix_proxy = Zabbix-GetProxyByHostname -Hostname $host_name
-                        "C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $host_name -k $item_key -o $backlog_count -vv" > "$root\DFS.log"
-                        C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $host_name -k $item_key -o $backlog_count -vv > "$root\DFS.log"
+                        #"C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $host_name -k $item_key -o $backlog_count -vv" > "$root\DFS.log"
+                        #C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $host_name -k $item_key -o $backlog_count -vv > "$root\DFS.log"
                         break
                     }
                 }
