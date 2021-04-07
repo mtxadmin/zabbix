@@ -43,11 +43,11 @@ $urls = Get-Content (Join-Path -Path $root -ChildPath "check_ssl_certs_urls_list
 [Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
 
-$urls | ? {$_} | % {
-    $url = $_
+$urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","https://" -match "^https://"} | % {
+    $url = $_.Trim() -replace "[^\x00-\x7F]"  # here are may be some non-printable symbols, let's remove them. And trim() alone doesn't work
     Write-Host $url
     $req = [Net.HttpWebRequest]::Create($url)
-    $req.GetResponse() |Out-Null
+    try {$req.GetResponse() |Out-Null} catch {}  # some 401 errors are normal, let's hide them. We need only certificate from connection.
     if (-not $req.ServicePoint.Certificate) {
         Write-Host URL cert check error: $url -ForegroundColor Red
     } else {
@@ -61,7 +61,7 @@ $urls | ? {$_} | % {
 
         # Other properties
         $cert_issuer = $cert.Issuer
-        $cert_subject = $cert.Subject
+        $cert_subject = $cert.Subject -replace "`""
 
         # Domain, just domain
         $domain = $url -replace "http(s|)://" -replace "/.*"
@@ -95,20 +95,20 @@ $urls | ? {$_} | % {
         $item_name = "Cert " + $domain + " expiring date"
         $item_key  = "Cert_" + $domain + "_expiring_date"
         $item_value_type = 4
-        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 3 -ItemValue $cert_end_date -Token $token -Mode $Mode
+        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 4 -ItemValue $cert_end_date -Token $token -Mode $Mode
 
 
-        # Block: send/create certificate date of expiring
+        # Block: send/create certificate issuer
         $item_name = "Cert " + $domain + " issuer"
         $item_key  = "Cert_" + $domain + "_issuer"
         $item_value_type = 4
-        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 3 -ItemValue $cert_issuer -Token $token -Mode $Mode
+        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 4 -ItemValue $cert_issuer -Token $token -Mode $Mode
 
 
-        # Block: send/create certificate date of expiring
+        # Block: send/create certificate subject
         $item_name = "Cert " + $domain + " subject"
         $item_key  = "Cert_" + $domain + "_subject"
         $item_value_type = 4
-        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 3 -ItemValue $cert_subject -Token $token -Mode $Mode
+        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 4 -ItemValue $cert_subject -Token $token -Mode $Mode
     }
 }
