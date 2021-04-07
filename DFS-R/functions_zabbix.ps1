@@ -231,6 +231,32 @@ $post_params = @"
 }
 
 
+function Zabbix-AddOrSendKey ([String]$HostName,[String]$ItemName,[String]$ItemKey,[int]$ItemType=2,[int]$ItemValueType,$ItemValue,[String]$Token,[String]$Mode) {
+    # meta-function to add key or send it to zabbix proxy
+
+    Write-Host "Host: " -ForegroundColor Green -NoNewline; Write-Host $HostName
+    Write-Host "Item name: " -ForegroundColor Green -NoNewline; Write-Host $ItemName
+    Write-Host "Item key: "  -ForegroundColor Green -NoNewline; Write-Host $ItemKey
+    Write-Host ("Value: " + $ItemValue)
+
+    switch ($Mode) {
+        "Setup" {
+            $hostid = Zabbix-GetHostIdByName -HostName $HostName -Token $Token
+            Zabbix-CreateItem -HostId $hostid -ItemName $ItemName -ItemKey $ItemKey -ItemValueType $ItemValueType -Token $Token
+            Zabbix-CheckItem -ItemKey $ItemKey -HostId $hostid -Token $Token
+            break
+        }
+
+        "Scheduler" {
+            # Keys should be added to zabbix already by setup mode.
+            $zabbix_proxy = Zabbix-GetProxyByHostname -Hostname $HostName
+            C:\zabbix\bin\zabbix_sender.exe -z $Proxy -s $HostName -k $ItemKey -o $ItemValue
+            break
+        }
+    }
+}
+
+
 function Check-ElevatedPermissions () {
     # For scripts those must be run in elevated session
     # http://woshub.com/check-powershell-script-running-elevated/
@@ -238,11 +264,11 @@ function Check-ElevatedPermissions () {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
         Write-Warning "Insufficient permissions to run this script. Open the PowerShell console as an administrator and run this script again."
         Break
-    }
-    else {
+    } else {
         Write-Host "Code is running as administrator — go on executing the script..." -ForegroundColor Green
     }
 }
+
 
 function Translit-Text ([String]$String) {
     # This functions converts Russian symbols to ASCII
