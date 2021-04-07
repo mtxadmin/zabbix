@@ -254,7 +254,7 @@ function Zabbix-AddOrSendKey ([String]$HostName,[String]$ItemName,[String]$ItemK
         "Scheduler" {
             # Keys should be added to zabbix already by setup mode.
             $zabbix_proxy = Zabbix-GetProxyByHostname -Hostname $HostName
-            C:\zabbix\bin\zabbix_sender.exe -z $Proxy -s $HostName -k $ItemKey -o $ItemValue
+            C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $HostName -k $ItemKey -o $ItemValue
             break
         }
     }
