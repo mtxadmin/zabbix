@@ -21,6 +21,18 @@ $password = "zabbix"
 $root = $PSScriptRoot
 . $root\functions_zabbix.ps1  # include general zabbix functions
 
+function Zabbix-GetProxyByHostname ([String]$Hostname) {
+    # Custom function
+
+    # You can tailor rule block for your infrastructure here. Example:
+    if ($Hostname.StartsWith("HQ-"))  {$zabbix_proxy = "10.1.0.100"}
+    if ($Hostname.StartsWith("BR1-")) {$zabbix_proxy = "10.2.0.100"}
+    if ($Hostname.StartsWith("BR2-")) {$zabbix_proxy = "10.3.0.100"}
+    if ($Hostname.StartsWith("BR3-")) {$zabbix_proxy = "10.4.0.100"}
+
+    return $zabbix_proxy
+}
+
 Clear-Host
 
 # Importing URLs from text file, removing empty spaces and comments
