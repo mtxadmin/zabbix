@@ -247,7 +247,6 @@ function Zabbix-AddOrSendKey ([String]$HostName,[String]$ItemName,[String]$ItemK
         "Setup" {
             $hostid = Zabbix-GetHostIdByName -HostName $HostName -Token $Token
             Zabbix-CreateItem -HostId $hostid -ItemName $ItemName -ItemKey $ItemKey -ItemValueType $ItemValueType -Token $Token
-            Zabbix-CheckItem -ItemKey $ItemKey -HostId $hostid -Token $Token
             break
         }
 
