@@ -6,4 +6,6 @@
 https://mail.ru
 https://www.zabbix.com/documentation/
 
+https://server1/
+https://postserver/owa/
 
