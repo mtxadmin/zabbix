@@ -128,7 +128,7 @@ function Zabbix-CreateItem([String]$ItemName,[String]$ItemKey,[int]$ItemType=2,[
 
 
     # Checking item
-    if (Zabbix-CheckItem -ItemKey $ItemKey) {
+    if (Zabbix-CheckItem -ItemKey $ItemKey -HostId $HostId -Token $Token) {
         Write-Host "Item is already present"
         return 1
     }
@@ -163,6 +163,10 @@ $post_params = @"
         Write-Host "The item was successfully created"
         return 0
     }
+
+    # and recheck
+    Write-Host "Rechecking created item..."
+    Zabbix-CheckItem -ItemKey $ItemKey -HostId $HostId -Token $Token
 
 }
 
