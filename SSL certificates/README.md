@@ -35,8 +35,6 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
 	
 	- "Run whether user is logged on or not"
 
-	- "Run with highest privileges"
-
 	- Configure for: set latest version
 
 
@@ -55,7 +53,7 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
         Action: Start a program<br>
         Program/script: Powershell.exe<br>
         (or: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe)<br>
-        Add arguments (optional): -NoProfile -ExecutionPolicy Bypass -File "c:\zabbix\scripts\check_ssl_certs.ps1" -Mode "Scheduler"<br>
+        Add arguments (optional): -NoProfile -NoLogo -NonInteractive -ExecutionPolicy Bypass -File "c:\zabbix\scripts\check_ssl_certs.ps1" -Mode "Scheduler"<br>
         (edit path to script here. And this is NOT optional :-) )<br>
 
     - In Settings tab:<br>
