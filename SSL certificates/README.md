@@ -61,7 +61,7 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
     - In Settings tab:<br>
 	Stop the task if it runs longer than: 1 hour (this is optional parameter, just in case)
 
-    After clicking OK don't forget to enter (correct!) password to account, if you didn't entered SYSTEM account.
+    After clicking OK don't forget to enter (correct!) password to account, if you didn't enter SYSTEM account.
 
 4. Run created task and see that status changed to Ready and Last Run Result is (0x0)
 
