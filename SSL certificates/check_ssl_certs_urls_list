@@ -1,0 +1,9 @@
+# List of URLs to monitor SSL/HTTPS certificates
+# Empty lines and lines beginning with # are comments
+# For non-ASCII domains convert them to punycode (xn--...)
+
+
+https://mail.ru
+https://www.zabbix.com/documentation/
+
+
