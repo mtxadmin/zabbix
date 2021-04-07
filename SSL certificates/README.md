@@ -45,7 +45,7 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
 	
         Begin task: On a schedule (default)<br>
         Daily<br>
-        Recur every 1 days
+        Recur every 1 days<br>
         Stop task if it runs longer than: 30 minutes (this is optional parameter, just in case)<br>
         Enabled (default)
 
