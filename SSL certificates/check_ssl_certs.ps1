@@ -11,6 +11,8 @@ param ([CmdletBinding()][ValidateSet("Setup","Scheduler")][String]$Mode="Setup")
 # https://stackoverflow.com/questions/39253055/powershell-script-to-get-certificate-expiry-for-a-website-remotely-for-multiple
 
 
+$zabbix_server_url = "http://zabbix.domain.local"
+
 <# Only for example. Do not enter real credentials in saved script! Enter them in temporarily session in setup process.
 $user = "Admin"
 $password = "zabbix"
