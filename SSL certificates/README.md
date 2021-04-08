@@ -9,9 +9,9 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
 
 1. Copy files check_ssl_certs.ps1, check_ssl_certs_urls_list.txt, functions_zabbix.ps1 to any folder on any server (its host must be exist in zabbix). And don't forget functions_zabbix.ps1
 
-2. Edit **check_ssl_certs_urls_list.txt** and write there all needed urls for monitoring
+2. Edit check_ssl_certs_urls_list.txt and write there all needed urls for monitoring
 
-3. Run script **check_ssl_certs.ps1** and check for errors.<br>
+3. Run script check_ssl_certs.ps1 and check for errors.<br>
     - Login to server
     - Run Powershell ISE
     - Open check_ssl_certs.ps1
