@@ -7,7 +7,7 @@ Script detects all DFS-R folders on server, and automatically makes all items on
 
 ## Installation:
 
-1. Copy files DFS-R_backlog.ps1 and functions_zabbix.ps1 to any folders on DFS-R server (one of)
+1. Copy files DFS-R_backlog.ps1 and functions_zabbix.ps1 to any folder on DFS-R server (one of). And don't forget functions_zabbix.ps1
 
 2. Run script DFS-R_backlog.ps1 with elevated permissions and check for errors.<br>
     - Login to server with account which has sufficient permissions for reading DFS-R data
