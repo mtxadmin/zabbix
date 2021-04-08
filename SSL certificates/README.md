@@ -11,7 +11,7 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
 
 2. Edit **check_ssl_certs_urls_list.txt** and write there all needed urls for monitoring
 
-3. Run script check_ssl_certs.ps1 and check for errors.<br>
+3. Run script **check_ssl_certs.ps1** and check for errors.<br>
     - Login to server
     - Run Powershell ISE
     - Open check_ssl_certs.ps1
