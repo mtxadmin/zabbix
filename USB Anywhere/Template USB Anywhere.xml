@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-04-09T15:18:49Z</date>
+    <groups>
+        <group>
+            <name>USB Anywhere</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>USB Anywhere</template>
+            <name>USB Anywhere</name>
+            <groups>
+                <group>
+                    <name>USB Anywhere</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>ICMP</name>
+                </application>
+                <application>
+                    <name>SNMP</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Boot version</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.4.0</snmp_oid>
+                    <key>Boot_version</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>CPU utilization</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.6.0</snmp_oid>
+                    <key>CPU_utilization</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min({$USBANYWHERE_CPU_TIME})}&gt;{$USBANYWHERE_CPU_AVG}</expression>
+                            <name>CPU utilization on {HOST.NAME} is high for {$USBANYWHERE_CPU_TIME}</name>
+                            <opdata>Current utilization: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Firmware version</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.3.0</snmp_oid>
+                    <key>Firmware_version</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Free memory</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.9.0</snmp_oid>
+                    <key>Free_memory</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min({$USBANYWHERE_MEM_TIME})}&lt;{$USBANYWHERE_MEM_AVG}</expression>
+                            <name>Free memory on {HOST.NAME} is low</name>
+                            <opdata>Current free memory: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Free memory on {HOST.NAME} is very low</name>
+                                    <expression>{USB Anywhere:Free_memory.min({$USBANYWHERE_MEM_TIME})}&lt;{$USBANYWHERE_MEM_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min({$USBANYWHERE_MEM_TIME})}&lt;{$USBANYWHERE_MEM_HIGH}</expression>
+                            <name>Free memory on {HOST.NAME} is very low</name>
+                            <opdata>Current free memory: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>ICMP ping status</name>
+                    <type>SIMPLE</type>
+                    <key>icmpping[{HOST.HOST}]</key>
+                    <applications>
+                        <application>
+                            <name>ICMP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(2)}=0</expression>
+                            <name>{HOST.NAME} is unavailable by ICMP</name>
+                            <priority>DISASTER</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Location</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.1.6.0</snmp_oid>
+                    <key>Location</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MAC address</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.2.0</snmp_oid>
+                    <key>MAC_address</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Model name</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.1.1.0</snmp_oid>
+                    <key>Model_name</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>POST version</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.5.0</snmp_oid>
+                    <key>POST_version</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>System name</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.1.5.0</snmp_oid>
+                    <key>System_name</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Total memory</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.8.0</snmp_oid>
+                    <key>Total_memory</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Uptime</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.2.1.1.3.0</snmp_oid>
+                    <key>Uptime</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Used memory</name>
+                    <type>SNMP_AGENT</type>
+                    <snmp_oid>1.3.6.1.4.1.332.11.6.1.10.0</snmp_oid>
+                    <key>Used_memory</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>SNMP</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$USBANYWHERE_CPU_AVG}</macro>
+                    <value>90</value>
+                    <description>CPU utilization threshold in percent</description>
+                </macro>
+                <macro>
+                    <macro>{$USBANYWHERE_CPU_TIME}</macro>
+                    <value>20m</value>
+                    <description>Time threshold of CPU utilization</description>
+                </macro>
+                <macro>
+                    <macro>{$USBANYWHERE_MEM_AVG}</macro>
+                    <value>10M</value>
+                    <description>Free memory threshold in bytes</description>
+                </macro>
+                <macro>
+                    <macro>{$USBANYWHERE_MEM_HIGH}</macro>
+                    <value>1M</value>
+                    <description>Free memory threshold in bytes</description>
+                </macro>
+                <macro>
+                    <macro>{$USBANYWHERE_MEM_TIME}</macro>
+                    <value>20m</value>
+                    <description>Time threshold of free memory</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
