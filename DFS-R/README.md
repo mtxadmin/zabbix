@@ -1,4 +1,4 @@
-## Script to monitor DFS-R queues.
+## Script to monitor DFS-R queues
 
 The script sends length of replication queues (Microsoft: "DFS-R backlog count") to Zabbix.
 
