@@ -20,6 +20,8 @@ Script detects all DFS-R folders on server, and automatically makes all items on
     - Check for errors
 
     Script will detect all DFS-R folders and add appropriate keys to zabbix (via Zabbix API)
+    
+    Now let's configure regular sending of monitoring data to these keys
 
 3. Add script to Windows task scheduler:<br>
     "Create Task.."
