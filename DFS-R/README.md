@@ -19,7 +19,7 @@ Script detects all DFS-R folders on server, and automatically makes all items on
     - Run DFS-R_backlog.ps1
     - Check for errors
 
-    Script will detect all DFS-R folders and add appropriate keys in zabbix (via Zabbix API)
+    Script will detect all DFS-R folders and add appropriate keys to zabbix (via Zabbix API)
 
 3. Add script to Windows task scheduler:<br>
     "Create Task.."
