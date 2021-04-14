@@ -260,6 +260,82 @@ function Zabbix-AddOrSendKey ([String]$HostName,[String]$ItemName,[String]$ItemK
 }
 
 
+function Zabbix-CheckTrigger([String]$Description,[String]$Hostname,[String]$Token) {
+    # Checking existense of a trigger
+    # https://www.zabbix.com/documentation/current/manual/api/reference/trigger/get
+$post_params = @"
+{
+    "jsonrpc": "2.0",
+    "method": "trigger.get",
+    "params": {
+        "output": "extend",
+        "host": "$Hostname",
+        "search": {
+            "description": "$Description"
+        }
+    },
+    "auth": "$Token",
+    "id": 1
+}
+"@
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    if (-not ((ConvertFrom-Json $answer).result)) {
+        Write-Host "Trigger is absent"
+        return $false
+    } else {
+        Write-Host "Trigger is present"
+        return $true
+    }
+}
+
+
+function Zabbix-CreateTrigger([String]$Description,[String]$Expression,[String]$Token) {
+    # Function to create zabbix triggers via API
+    # https://www.zabbix.com/documentation/current/manual/api/reference/trigger/create
+    # Yes, it is correct, hostname is omitted. Host is detected from expression - see API manual
+
+    # But for checking we need hostname. Ok.
+    $host_name = $Expression -replace "^{" -replace ":.*"
+
+    # Checking item
+    if (Zabbix-CheckTrigger -Hostname $host_name -Description $Description -Token $Token) {
+        Write-Host "Trigger is already present"
+        return 1
+    }
+
+    # Creating an item
+$post_params = @"
+{
+    "jsonrpc": "2.0",
+    "method": "trigger.create",
+    "params": [
+        {
+            "description": "$Description",
+            "expression": "$Expression"
+            ]
+        }
+    ],
+    "auth": "$Token",
+    "id": 1
+}
+"@
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+
+    if (-not ((ConvertFrom-Json $answer).result.itemids)) {
+        # Item is absent
+        Write-Host "Error while creating the trigger" -ForegroundColor Yellow
+        Write-Host (ConvertFrom-Json $answer).error.message -ForegroundColor Yellow
+        Write-Host (ConvertFrom-Json $answer).error.data -ForegroundColor Yellow
+        return -1
+    } else {
+        # Item is present
+        Write-Host "The item was successfully created"
+        return 0
+    }
+
+}
+
+
 function Check-ElevatedPermissions () {
     # For scripts those must be run in elevated session
     # http://woshub.com/check-powershell-script-running-elevated/
