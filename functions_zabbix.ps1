@@ -294,6 +294,10 @@ function Zabbix-CreateTrigger([String]$Description,[String]$Expression,[int]$Pri
     # https://www.zabbix.com/documentation/current/manual/api/reference/trigger/create
     # Yes, it is correct, hostname is omitted. Host is detected from expression - see API manual
 
+    # Todo: return trigger id - for dependencies
+    # Todo: make dependencies mechanism. It seems in my test it was way too overcomplex. 
+    # ConvertTo-Json -AsArray can transform data to zabbix API format, but it exists only in PS 7.0
+
     # But for checking we need hostname. Ok.
     $host_name = $Expression -replace "^{" -replace ":.*"
 
@@ -303,7 +307,7 @@ function Zabbix-CreateTrigger([String]$Description,[String]$Expression,[int]$Pri
         return 1
     }
 
-    # Creating an item
+    # Creating a trigger
 $post_params = @"
 {
     "jsonrpc": "2.0",
@@ -330,6 +334,78 @@ $post_params = @"
     } else {
         # Trigger is present
         Write-Host "The trigger was successfully created"
+        return 0
+    }
+}
+
+
+function Zabbix-CheckMacro([String]$HostId,[String]$MacroName,[String]$Token) {
+    # Checking existense of a host macro
+    # https://www.zabbix.com/documentation/current/manual/api/reference/usermacro/get
+$post_params = @"
+{
+    "jsonrpc": "2.0",
+    "method": "usermacro.get",
+    "params": {
+        "output": "extend",
+        "hostids": "$HostId"
+    },
+    "auth": "$Token",
+    "id": 1
+}
+"@
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    if (-not ((ConvertFrom-Json $answer).result)) {
+        Write-Host "Macro is absent"
+        return $false
+    } else {
+        Write-Host "Some macro is present. Checking name..."
+        if ((ConvertFrom-Json $answer).result.macro -eq $MacroName) {
+            Write-Host "Macro is present"
+            return $true
+        } else {
+            Write-Host "Macro is absent"
+            return $false
+        }
+    }
+}
+
+
+function Zabbix-CreateMacro([String]$HostId,[String]$MacroName,[String]$MacroValue,[String]$Token) {
+    # Function to create zabbix host macro via API
+    # https://www.zabbix.com/documentation/current/manual/api/reference/usermacro/create
+
+    # Checking macro
+    if (Zabbix-CheckMacro -HostId $HostId -MacroName "$MacroName" -Token $token) {
+        Write-Host "Macro is already present"
+        return 1
+    }
+
+    # Creating an item
+$post_params = @"
+{
+    "jsonrpc": "2.0",
+    "method": "usermacro.create",
+    "params": {
+        "hostid": "$HostId",
+        "macro": "$MacroName",
+        "value": "$MacroValue"
+    },
+    "auth": "$Token",
+    "id": 1
+}
+"@
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+
+    if (-not ((ConvertFrom-Json $answer).result.hostmacroids)) {
+        # Macro is absent
+        Write-Host "Error while creating the macro" -ForegroundColor Yellow
+        Write-Host (ConvertFrom-Json $answer).error.message -ForegroundColor Yellow
+        Write-Host (ConvertFrom-Json $answer).error.data -ForegroundColor Yellow
+        return -1
+    } else {
+        # Macro is present
+        Write-Host "The macro was successfully created"
         return 0
     }
 
