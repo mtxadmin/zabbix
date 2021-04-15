@@ -98,9 +98,10 @@ $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","http
                 $cert_days_avg  = "{`$CERT_EXPIRING_DAYS_AVG}"
                 $cert_days_high = "{`$CERT_EXPIRING_DAYS_HIGH}"
 
-                $cert_days_warn_value = "90d"
-                $cert_days_avg_value  = "60d"
-                $cert_days_high_value = "30d"
+                # Only numbers, without "d"
+                $cert_days_warn_value = "90"
+                $cert_days_avg_value  = "60"
+                $cert_days_high_value = "30"
 
                 # Block: create cert macros
                 Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_warn -MacroValue $cert_days_warn_value -Token $token
