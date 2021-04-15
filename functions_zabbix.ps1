@@ -289,7 +289,7 @@ $post_params = @"
 }
 
 
-function Zabbix-CreateTrigger([String]$Description,[String]$Expression,[String]$Token) {
+function Zabbix-CreateTrigger([String]$Description,[String]$Expression,[int]$Priority=0,[String]$Token) {
     # Function to create zabbix triggers via API
     # https://www.zabbix.com/documentation/current/manual/api/reference/trigger/create
     # Yes, it is correct, hostname is omitted. Host is detected from expression - see API manual
@@ -311,8 +311,8 @@ $post_params = @"
     "params": [
         {
             "description": "$Description",
-            "expression": "$Expression"
-            ]
+            "expression": "$Expression",
+            "priority": "$Priority"
         }
     ],
     "auth": "$Token",
@@ -321,15 +321,15 @@ $post_params = @"
 "@
     $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
 
-    if (-not ((ConvertFrom-Json $answer).result.itemids)) {
-        # Item is absent
+    if (-not ((ConvertFrom-Json $answer).result.triggerids)) {
+        # Trigger is absent
         Write-Host "Error while creating the trigger" -ForegroundColor Yellow
         Write-Host (ConvertFrom-Json $answer).error.message -ForegroundColor Yellow
         Write-Host (ConvertFrom-Json $answer).error.data -ForegroundColor Yellow
         return -1
     } else {
-        # Item is present
-        Write-Host "The item was successfully created"
+        # Trigger is present
+        Write-Host "The trigger was successfully created"
         return 0
     }
 
