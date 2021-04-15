@@ -41,7 +41,7 @@ $urls = Get-Content (Join-Path -Path $root -ChildPath "check_ssl_certs_urls_list
 
 # Disable certificate validations
 [Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
-
+[Net.ServicePointManager]::SecurityProtocol = 'tls12, tls11, tls'  # to avoid error "The request was aborted: Could not create SSL/TLS secure channel."
 
 $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","https://" -match "^https://"} | % {
     $url = $_.Trim() -replace "[^\x00-\x7F]"  # here are may be some non-printable symbols, let's remove them. And trim() alone doesn't work
@@ -64,10 +64,9 @@ $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","http
         $cert_subject = $cert.Subject -replace "`""
 
         # Domain, just domain
-        $domain = $url -replace "http(s|)://" -replace "/.*"
-
-        $host_name = $env:ComputerName
-
+        # If URL contains port (http://server.local:8080) then we need two vars - human-readable "displayname" and one for zabbix keys
+        $domain_name = $url -replace "http(s|)://" -replace "/.*"
+        $domain_key  = $url -replace "http(s|)://" -replace "/.*" -replace ":","_"
 
         switch ($Mode) {
             "Setup" {
@@ -75,39 +74,81 @@ $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","http
             }
         }
 
+        $host_name = $env:ComputerName
+        
+
 
         # Block: send/create certificate days to expire
-        $item_name = "Cert " + $domain + " expiring days"
-        $item_key  = "Cert_" + $domain + "_expiring_days"
+        $item_name = "Cert " + $domain_name + " expiring days"
+        $item_key  = "Cert_" + $domain_key  + "_expiring_days"
         $item_value_type = 3
-        <#
-        value_type:
-        0 - numeric float;
-        1 - character;
-        2 - log;
-        3 - numeric unsigned;
-        4 - text.
-        #>
+        <#  value_type:
+            0 - numeric float;
+            1 - character;
+            2 - log;
+            3 - numeric unsigned;
+            4 - text. #>
         Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 3 -ItemValue $cert_days -Token $token -Mode $Mode
+        
+        switch ($Mode) {
+            "Setup" {
+                $host_id = Zabbix-GetHostIdByName $host_name -Token $token
+
+                $cert_days_warn = "{`$CERT_EXPIRING_DAYS_WARN}"
+                $cert_days_avg  = "{`$CERT_EXPIRING_DAYS_AVG}"
+                $cert_days_high = "{`$CERT_EXPIRING_DAYS_HIGH}"
+
+                $cert_days_warn_value = "90d"
+                $cert_days_avg_value  = "60d"
+                $cert_days_high_value = "30d"
+
+                # Block: create cert macros
+                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_warn -MacroValue $cert_days_warn_value -Token $token
+                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_avg  -MacroValue $cert_days_avg_value  -Token $token
+                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_high -MacroValue $cert_days_high_value -Token $token
+
+
+                # Block: create cert triggers
+                <#  Priority/severity:
+                    0 - (default) not classified;
+                    1 - information;
+                    2 - warning;
+                    3 - average;
+                    4 - high;
+                    5 - disaster. #>
+                $priority = 2
+                $description = "Cert $domain_name is expriring in $cert_days_warn"
+                $expression  = "{$host_name`:Cert_$domain_key`_expiring_days.last()}<{`$CERT_EXPIRING_DAYS_WARN}"
+                Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+                $priority = 3
+                $description = "Cert $domain_name is expriring in $cert_days_avg"
+                $expression  = "{$host_name`:Cert_$domain_key`_expiring_days.last()}<{`$CERT_EXPIRING_DAYS_AVG}"
+                Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+                $priority = 4
+                $description = "Cert $domain_name is expriring in $cert_days_high"
+                $expression  = "{$host_name`:Cert_$domain_key`_expiring_days.last()}<{`$CERT_EXPIRING_DAYS_HIGH}"
+                Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+            }
+        }
 
 
         # Block: send/create certificate date of expiring
-        $item_name = "Cert " + $domain + " expiring date"
-        $item_key  = "Cert_" + $domain + "_expiring_date"
+        $item_name = "Cert " + $domain_name + " expiring date"
+        $item_key  = "Cert_" + $domain_key  + "_expiring_date"
         $item_value_type = 4
         Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 4 -ItemValue $cert_end_date -Token $token -Mode $Mode
 
 
         # Block: send/create certificate issuer
-        $item_name = "Cert " + $domain + " issuer"
-        $item_key  = "Cert_" + $domain + "_issuer"
+        $item_name = "Cert " + $domain_name + " issuer"
+        $item_key  = "Cert_" + $domain_key  + "_issuer"
         $item_value_type = 4
         Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 4 -ItemValue $cert_issuer -Token $token -Mode $Mode
 
 
         # Block: send/create certificate subject
-        $item_name = "Cert " + $domain + " subject"
-        $item_key  = "Cert_" + $domain + "_subject"
+        $item_name = "Cert " + $domain_name + " subject"
+        $item_key  = "Cert_" + $domain_key  + "_subject"
         $item_value_type = 4
         Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 4 -ItemValue $cert_subject -Token $token -Mode $Mode
     }
