@@ -4,6 +4,8 @@ The script sends dates of HTTPS certificates to Zabbix.
 
 Script lists all urls from text file, and automatically makes all items on Zabbix server through API. You don't have to make them manually.
 
+This solution based on Microsoft Powershell which embedded in Windows.
+
 
 ## Installation:
 
