@@ -371,7 +371,7 @@ $post_params = @"
 }
 
 
-function Zabbix-CreateMacro([String]$HostId,[String]$MacroName,[String]$MacroValue,[String]$Token) {
+function Zabbix-CreateMacro([String]$HostId,[String]$MacroName,[String]$MacroValue,[String]$MacroDescription,[String]$Token) {
     # Function to create zabbix host macro via API
     # https://www.zabbix.com/documentation/current/manual/api/reference/usermacro/create
 
@@ -389,7 +389,8 @@ $post_params = @"
     "params": {
         "hostid": "$HostId",
         "macro": "$MacroName",
-        "value": "$MacroValue"
+        "value": "$MacroValue",
+        "description": "$MacroDescription"
     },
     "auth": "$Token",
     "id": 1
