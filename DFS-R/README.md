@@ -4,6 +4,8 @@ The script sends length of replication queues (Microsoft: "DFS-R backlog count")
 
 Script detects all DFS-R folders on server, and automatically makes all items on Zabbix server through API. You don't have to make them manually.
 
+This solution based on Microsoft Powershell which embedded in Windows.
+
 
 ## Installation:
 
