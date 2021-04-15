@@ -104,9 +104,9 @@ $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","http
                 $cert_days_high_value = "30"
 
                 # Block: create cert macros
-                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_warn -MacroValue $cert_days_warn_value -Token $token
-                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_avg  -MacroValue $cert_days_avg_value  -Token $token
-                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_high -MacroValue $cert_days_high_value -Token $token
+                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_warn -MacroValue $cert_days_warn_value -Token $token -MacroDescription "Warning threshold: remaining number of days of HTTPS certificates"
+                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_avg  -MacroValue $cert_days_avg_value  -Token $token -MacroDescription "Average threshold: remaining number of days of HTTPS certificates"
+                Zabbix-CreateMacro -HostId $host_id -MacroName $cert_days_high -MacroValue $cert_days_high_value -Token $token -MacroDescription "High threshold: remaining number of days of HTTPS certificates"
 
 
                 # Block: create cert triggers
