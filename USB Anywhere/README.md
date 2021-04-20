@@ -1,7 +1,7 @@
 
 ## Zabbix template to monitor USB Anywhere devices
 
-Format: zabbix 5.0 xml
+Format: zabbix 5.0 xml. It should also work on 5.2 (see [docs](https://www.zabbix.com/documentation/current/manual/xml_export_import/media) about template formats)
 
 Apply the template to USB Anywhere hosts. There must be SNMP agents on them with correct community for reading data.
 
