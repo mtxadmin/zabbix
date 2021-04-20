@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-04-02T15:54:09Z</date>
+    <date>2021-04-20T10:59:22Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -46,7 +46,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Active Mailbox Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -58,7 +58,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Active Mailbox Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -81,7 +81,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Active Non-Smtp Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -93,7 +93,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Active Non-Smtp Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -114,7 +114,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Active Remote Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -126,7 +126,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Active Remote Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -147,7 +147,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Aggregate Delivery Queue Length (All Queues)</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -159,7 +159,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Aggregate Delivery Queue Length (All Queues)</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -428,7 +428,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Largest Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -440,7 +440,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Largest Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -649,7 +649,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Poison Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -661,7 +661,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Poison Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -684,7 +684,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Retry Mailbox Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -696,7 +696,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Retry Mailbox Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -719,7 +719,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Retry Non-Smtp Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -731,7 +731,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Retry Non-Smtp Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -752,7 +752,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Retry Remote Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -764,7 +764,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Retry Remote Delivery Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -837,7 +837,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Submission Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -849,7 +849,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Submission Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -938,7 +938,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <name>Unreachable Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
@@ -950,7 +950,7 @@ Is in Exchange 2016 performance counters</description>
                         <trigger>
                             <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
                             <name>Unreachable Queue Length</name>
-                            <opdata>Queue length: {ITEM.LASTVALUE1}</opdata>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>HIGH</priority>
                         </trigger>
                     </triggers>
@@ -1052,7 +1052,7 @@ Is in Exchange 2016 performance counters</description>
             <macros>
                 <macro>
                     <macro>{$EXCHANGE_TRANSPORT_QUEUES_AVG}</macro>
-                    <value>75</value>
+                    <value>80</value>
                 </macro>
                 <macro>
                     <macro>{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</macro>
