@@ -71,3 +71,4 @@ This solution based on Microsoft dcdiag.exe utility which exists on a server wit
 
 5. Check that zabbix server correctly receives data (see Latest data, Hosts: your host, Name: AD)
 
+6. Repeat for every DC in your infrastructure
