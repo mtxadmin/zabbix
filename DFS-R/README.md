@@ -9,18 +9,19 @@ This solution based on Microsoft Powershell which embedded in Windows.
 
 ## Installation:
 
-1. Copy files AD DC diag.ps1 and functions_zabbix.ps1 to any folder on AD DC. And don't forget functions_zabbix.ps1
+1. Copy files DFS-R_backlog.ps1 and functions_zabbix.ps1 to any folder on DFS-R server (one of). And don't forget functions_zabbix.ps1
 
-2. Run script AD DC diag.ps1 and check for errors.<br>
-    - Login to server with account which has sufficient permissions
-    - Open AD DC diag.ps1
+2. Run script DFS-R_backlog.ps1 with elevated permissions and check for errors.<br>
+    - Login to server with account which has sufficient permissions for reading DFS-R data
+    - Run Powershell ISE "as administrator" (from context menu)
+    - Open DFS-R_backlog.ps1
     - Edit first line of script with $zabbix_server_url variable. Save script.
     - Tailor function Zabbix-GetProxyByHostname for your infrastructure and naming conventions.
     - Set $user and $password variables in command line. They only need in setup run, do not add them to script for security reasons. 
-    - Run AD DC diag.ps1
+    - Run DFS-R_backlog.ps1
     - Check for errors
 
-    Script will add all appropriate keys to zabbix (via Zabbix API)
+    Script will detect all DFS-R folders and add appropriate keys to zabbix (via Zabbix API)
     
     Now let's configure regular sending of monitoring data to these keys
 
