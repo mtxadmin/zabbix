@@ -16,7 +16,7 @@ $post_params = @"
     "auth": null
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
     if ((ConvertFrom-Json $answer).result) {
         $token = (ConvertFrom-Json $answer).result
         return $token
@@ -48,7 +48,7 @@ $post_params = @"
 }
 "@
 
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
     if ((ConvertFrom-Json $answer).result) {
         $hostid = (ConvertFrom-Json $answer).result.hostid
         return $hostid
@@ -80,7 +80,7 @@ $post_params = @"
     "id": 1
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
     if (-not ((ConvertFrom-Json $answer).result)) {
         Write-Host "Item is absent"
         return $false
@@ -150,7 +150,7 @@ $post_params = @"
     "id": 1
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
 
     if (-not ((ConvertFrom-Json $answer).result.itemids)) {
         # Item is absent
@@ -188,7 +188,7 @@ $post_params = @"
 }
 "@
 
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
 
     if (-not ((ConvertFrom-Json $answer).result.hostid)) {
         # Error
@@ -220,7 +220,7 @@ $post_params = @"
 }
 "@
 
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
 
     if (-not ((ConvertFrom-Json $answer).result.hostid)) {
         # Error
@@ -278,7 +278,7 @@ $post_params = @"
     "id": 1
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
     if (-not ((ConvertFrom-Json $answer).result)) {
         Write-Host "Trigger is absent"
         return $false
@@ -323,7 +323,7 @@ $post_params = @"
     "id": 1
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
 
     if (-not ((ConvertFrom-Json $answer).result.triggerids)) {
         # Trigger is absent
@@ -354,7 +354,7 @@ $post_params = @"
     "id": 1
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc"
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
     if (-not ((ConvertFrom-Json $answer).result)) {
         Write-Host "Macro is absent"
         return $false
@@ -396,7 +396,7 @@ $post_params = @"
     "id": 1
 }
 "@
-    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" 
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
 
     if (-not ((ConvertFrom-Json $answer).result.hostmacroids)) {
         # Macro is absent
