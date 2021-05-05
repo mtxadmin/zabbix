@@ -76,6 +76,16 @@ $folders | % {
                 Write-Host "Item name: " -ForegroundColor Green -NoNewline; Write-Host $item_name
                 Write-Host "Item key: "  -ForegroundColor Green -NoNewline; Write-Host $item_key
                 Write-Host ("Count: " + $backlog_count)
+                
+                $item_value_type = 3
+                <#
+                value_type:
+                0 - numeric float;
+                1 - character;
+                2 - log;
+                3 - numeric unsigned;
+                4 - text.
+                #>
 
                 switch ($Mode) {
                     "Setup" {
