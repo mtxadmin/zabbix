@@ -86,41 +86,41 @@ and
     <summary>
         Full output of dcdiag.exe (only strings with test results)
     </summary>
-	<pre>
-         ......................... <DC> passed test Connectivity
-         ......................... <DC> passed test Advertising
-         ......................... <DC> passed test CheckSecurityError
-         ......................... <DC> passed test CutoffServers
-         ......................... <DC> passed test FrsEvent
-         ......................... <DC> passed test DFSREvent
-         ......................... <DC> passed test SysVolCheck
-         ......................... <DC> passed test FrsSysVol
-         ......................... <DC> passed test KccEvent
-         ......................... <DC> passed test KnowsOfRoleHolders
-         ......................... <DC> passed test MachineAccount
-         ......................... <DC> passed test NCSecDesc
-         ......................... <DC> passed test NetLogons
-         ......................... <DC> passed test ObjectsReplicated
-         ......................... <DC> passed test Replications
-         ......................... <DC> passed test RidManager
-         ......................... <DC> passed test Services
-         ......................... <DC> passed test SystemLog
-         ......................... <DC> passed test Topology
-         ......................... <DC> passed test VerifyReferences
-         ......................... <DC> passed test VerifyReplicas
-         ......................... <DC> passed test DNS
+         <pre>	
+         ......................... &ltDC> passed test Connectivity
+         ......................... &ltDC> passed test Advertising
+         ......................... &ltDC> passed test CheckSecurityError
+         ......................... &ltDC> passed test CutoffServers
+         ......................... &ltDC> passed test FrsEvent
+         ......................... &ltDC> passed test DFSREvent
+         ......................... &ltDC> passed test SysVolCheck
+         ......................... &ltDC> passed test FrsSysVol
+         ......................... &ltDC> passed test KccEvent
+         ......................... &ltDC> passed test KnowsOfRoleHolders
+         ......................... &ltDC> passed test MachineAccount
+         ......................... &ltDC> passed test NCSecDesc
+         ......................... &ltDC> passed test NetLogons
+         ......................... &ltDC> passed test ObjectsReplicated
+         ......................... &ltDC> passed test Replications
+         ......................... &ltDC> passed test RidManager
+         ......................... &ltDC> passed test Services
+         ......................... &ltDC> passed test SystemLog
+         ......................... &ltDC> passed test Topology
+         ......................... &ltDC> passed test VerifyReferences
+         ......................... &ltDC> passed test VerifyReplicas
+         ......................... &ltDC> passed test DNS
          ......................... ForestDnsZones passed test CheckSDRefDom
          ......................... DomainDnsZones passed test CheckSDRefDom
          ......................... Schema passed test CheckSDRefDom
          ......................... Schema passed test CrossRefValidation
          ......................... Configuration passed test CheckSDRefDom
          ......................... Configuration passed test CrossRefValidation
-         ......................... <DOMAIN> passed test CheckSDRefDom
-         ......................... <DOMAIN> passed test CrossRefValidation
-         ......................... <DOMAIN> passed test DNS
-         ......................... <DOMAIN> passed test LocatorCheck
-         ......................... <DOMAIN> passed test FsmoCheck
-         ......................... <DOMAIN> passed test Intersite
+         ......................... &ltDOMAIN> passed test CheckSDRefDom
+         ......................... &ltDOMAIN> passed test CrossRefValidation
+         ......................... &ltDOMAIN> passed test DNS
+         ......................... &ltDOMAIN> passed test LocatorCheck
+         ......................... &ltDOMAIN> passed test FsmoCheck
+         ......................... &ltDOMAIN> passed test Intersite
 	 </pre>
 </details>
 
