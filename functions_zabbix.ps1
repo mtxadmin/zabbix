@@ -335,6 +335,7 @@ $post_params = @"
         # Trigger is present
         Write-Host "The trigger was successfully created"
         # Rechecking
+        Write-Host "Rechecking created trigger..."
         Zabbix-CheckTrigger -Hostname $host_name -Description $Description -Token $Token
         return 0
     }
