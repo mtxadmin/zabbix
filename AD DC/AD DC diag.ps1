@@ -87,19 +87,19 @@ $output_full -match "(failed|passed) test "  # the space is needed
 #>
 
 $output_full -match "(failed|passed) test " -replace "\s+\.+\s+" | % {
-    $string = $_
-    
-    if ($string -notmatch $env:COMPUTERNAME) {
-        $string = $env:COMPUTERNAME + " $string"
+    $string_src = $_
+
+    if ($string_src -notmatch $env:COMPUTERNAME) {
+        $string_src = $env:COMPUTERNAME + " $string_src"
     }
     
     $result = $false
-    if ($string -match "passed test ") {
+    if ($string_src -match "passed test ") {
         $result = 1
-    } elseif ($string -match "failed test ") {
+    } elseif ($string_src -match "failed test ") {
         $result = 0
     }
-    $string = $string -replace "(failed|passed) test "
+    $string = $string_src -replace "(failed|passed) test "
     $string
 
 
