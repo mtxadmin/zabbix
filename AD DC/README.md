@@ -72,3 +72,53 @@ This solution based on Microsoft dcdiag.exe utility which exists on a server wit
 5. Check that zabbix server correctly receives data (see Latest data, Hosts: your host, Name: AD)
 
 6. Repeat for every DC in your infrastructure
+
+### Technical notes
+
+In general, this diagnostics cannot be made as a template. Dcdiag.exe returns most results with DC name, but some with domain name, which cannot be known in general.
+
+Also, there are two similar results in dcdiag.exe output:
+<DC> passed test DNS
+and
+<DOMAIN> passed test DNS
+
+<details>
+    <summary>
+        Full output of dcdiag (only test results)
+    </summary>
+         ......................... <DC> passed test Connectivity
+         ......................... <DC> passed test Advertising
+         ......................... <DC> passed test CheckSecurityError
+         ......................... <DC> passed test CutoffServers
+         ......................... <DC> passed test FrsEvent
+         ......................... <DC> passed test DFSREvent
+         ......................... <DC> passed test SysVolCheck
+         ......................... <DC> passed test FrsSysVol
+         ......................... <DC> passed test KccEvent
+         ......................... <DC> passed test KnowsOfRoleHolders
+         ......................... <DC> passed test MachineAccount
+         ......................... <DC> passed test NCSecDesc
+         ......................... <DC> passed test NetLogons
+         ......................... <DC> passed test ObjectsReplicated
+         ......................... <DC> passed test Replications
+         ......................... <DC> passed test RidManager
+         ......................... <DC> passed test Services
+         ......................... <DC> passed test SystemLog
+         ......................... <DC> passed test Topology
+         ......................... <DC> passed test VerifyReferences
+         ......................... <DC> passed test VerifyReplicas
+         ......................... <DC> passed test DNS
+         ......................... ForestDnsZones passed test CheckSDRefDom
+         ......................... DomainDnsZones passed test CheckSDRefDom
+         ......................... Schema passed test CheckSDRefDom
+         ......................... Schema passed test CrossRefValidation
+         ......................... Configuration passed test CheckSDRefDom
+         ......................... Configuration passed test CrossRefValidation
+         ......................... <DOMAIN> passed test CheckSDRefDom
+         ......................... <DOMAIN> passed test CrossRefValidation
+         ......................... <DOMAIN> passed test DNS
+         ......................... <DOMAIN> passed test LocatorCheck
+         ......................... <DOMAIN> passed test FsmoCheck
+         ......................... <DOMAIN> passed test Intersite
+</details>
+
