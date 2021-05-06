@@ -92,7 +92,6 @@ $folders | % {
                         if (-not $token) { $token = Zabbix-GetAuthToken -User $user -Password $password }
                         $hostid = Zabbix-GetHostIdByName -HostName $host_name -Token $token
                         Zabbix-CreateItem -HostId $hostid -ItemName $item_name -ItemKey $item_key -ItemValueType $item_value_type -Token $token
-                        Zabbix-CheckItem -ItemKey $item_key -HostId $hostid -Token $token
                         break
                     }
 
