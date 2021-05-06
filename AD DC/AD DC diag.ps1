@@ -138,10 +138,14 @@ $output_full -match "(failed|passed) test " -replace "\s+\.+\s+" | % {
                     4 - high;
                     5 - disaster. #>
             $priority = 4
-            #$description = "Cert $domain_name is expriring in $cert_days_high"
             $description = ("AD DC $env:COMPUTERNAME - dcdiag check error: " + $string_src -replace "passed","failed")
             $expression  = "{$env:COMPUTERNAME`:$item_key.last()}<>1"
-            Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+            if ($string -ne "SystemLog") {  # SystemLog check detects if whether exist any events in EventLog. In my experience, it is not very critical. Let's make a warning trigger for it.
+                Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+            } else {
+                $priority = 2
+                Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+            }
             
             break
         }
