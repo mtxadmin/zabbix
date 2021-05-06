@@ -34,7 +34,7 @@ This solution based on Microsoft dcdiag.exe utility which exists on a server wit
 	"When running the task, use the following user account:"<br>
 	Enter account with sufficient permissions for reading AD DC data<br>
 	DO NOT set chechbox "Do not store password"<br>
-	For instance, NT AUTHORITY/SYSTEM will work ok
+	Just for information, NT AUTHORITY/SYSTEM will work ok, but you cannot choose it from task scheduler on AD DCs
 	
 	- "Run whether user is logged on or not"
 
