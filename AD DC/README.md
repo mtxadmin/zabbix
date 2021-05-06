@@ -26,24 +26,29 @@ This solution based on Microsoft dcdiag.exe utility which exists on a server wit
     Now let's configure regular sending of monitoring data to these keys
 
 3. Add script to Windows task scheduler:<br>
+   Import task from "AD DC diad monitoring.xml" file
+<details>
+    <summary>
+        OR Create it manually (there is a caveat here if you want use SYSTEM account)
+    </summary>
     "Create Task.."
 
-    - In General tab:<br>
+   - In General tab:<br>
 	Name: enter any task name as you wish. For instance: "AD DC diag monitoring"
 
-	"When running the task, use the following user account:"<br>
+   "When running the task, use the following user account:"<br>
 	Enter account with sufficient permissions for reading AD DC data<br>
 	DO NOT set chechbox "Do not store password"<br>
 	Just for information, NT AUTHORITY/SYSTEM will work ok, but you cannot choose it from task scheduler on AD DCs
 	
-	- "Run whether user is logged on or not"
+   - "Run whether user is logged on or not"
 
-	- "Run with highest privileges"
+     - "Run with highest privileges"
 
-	- Configure for: set latest version
+     - Configure for: set latest version
 
 
-    - In Triggers tab:<br>
+     - In Triggers tab:<br>
         "New..."
 	
         Begin task: On a schedule (default)<br>
@@ -53,7 +58,7 @@ This solution based on Microsoft dcdiag.exe utility which exists on a server wit
         Stop task if it runs longer than: 30 minutes (this is optional parameter, just in case)<br>
         Enabled (default)
 
-    - In Actions tab:<br>
+     - In Actions tab:<br>
         "New..."
 
         Action: Start a program<br>
@@ -62,10 +67,12 @@ This solution based on Microsoft dcdiag.exe utility which exists on a server wit
         Add arguments (optional): -NoProfile -ExecutionPolicy Bypass -File "c:\zabbix\scripts\AD DC diag.ps1" -Mode "Scheduler"<br>
         (edit path to script here. And this is NOT optional :-) )<br>
 
-    - In Settings tab:<br>
+     - In Settings tab:<br>
 	Stop the task if it runs longer than: 1 hour (this is optional parameter, just in case)
 
-    After clicking OK don't forget to enter (correct!) password to account. (Of course, if you entered NT AUTHORITY/SYSTEM, you will not be prompted for password)
+   After clicking OK don't forget to enter (correct!) password to account. (Of course, if you entered NT AUTHORITY/SYSTEM, you will not be prompted for password)
+</details>
+<br>
 
 4. Run created task and see that status changed to Ready and Last Run Result is (0x0)
 
