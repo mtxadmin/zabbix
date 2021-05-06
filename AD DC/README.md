@@ -86,6 +86,7 @@ and
     <summary>
         Full output of dcdiag (only test results)
     </summary>
+	<pre>
          ......................... <DC> passed test Connectivity
          ......................... <DC> passed test Advertising
          ......................... <DC> passed test CheckSecurityError
@@ -120,5 +121,6 @@ and
          ......................... <DOMAIN> passed test LocatorCheck
          ......................... <DOMAIN> passed test FsmoCheck
          ......................... <DOMAIN> passed test Intersite
+	 </pre>
 </details>
 
