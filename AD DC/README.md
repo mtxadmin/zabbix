@@ -84,7 +84,7 @@ and
 
 <details>
     <summary>
-        Full output of dcdiag (only test results)
+        Full output of dcdiag.exe (only strings with test results)
     </summary>
 	<pre>
          ......................... <DC> passed test Connectivity
