@@ -32,7 +32,7 @@ Clear-Host
 
 # Let's take all dcdiag output
 #$output     = dcdiag
-#$output_full= dcdiag /c
+$output_full= dcdiag /c
 
 # dcdiag / c : Comprehensive, runs all tests, including non-default tests but excluding DcPromo and RegisterInDNS. Can use with /skip
 # 
