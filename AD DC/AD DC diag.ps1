@@ -122,9 +122,27 @@ $output_full -match "(failed|passed) test " -replace "\s+\.+\s+" | % {
 
     switch ($Mode) {
         "Setup" {
+            # Preparing
             if (-not $token) { $token = Zabbix-GetAuthToken -User $user -Password $password }
             $hostid = Zabbix-GetHostIdByName -HostName $env:COMPUTERNAME -Token $token
+            
+            # Creating item
             Zabbix-CreateItem -HostId $hostid -ItemName $item_name -ItemKey $item_key -ItemValueType $item_value_type -Token $token
+            
+            # Block: create trigger for that item
+                <#  Priority/severity:
+                    0 - (default) not classified;
+                    1 - information;
+                    2 - warning;
+                    3 - average;
+                    4 - high;
+                    5 - disaster. #>
+            $priority = 4
+            #$description = "Cert $domain_name is expriring in $cert_days_high"
+            $description = ("AD DC $env:COMPUTERNAME - dcdiag check error: " + $string_src -replace "passed","failed")
+            $expression  = "{$env:COMPUTERNAME`:$item_key.last()}<>1"
+            Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+            
             break
         }
 
