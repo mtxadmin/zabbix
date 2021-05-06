@@ -334,6 +334,8 @@ $post_params = @"
     } else {
         # Trigger is present
         Write-Host "The trigger was successfully created"
+        # Rechecking
+        Zabbix-CheckTrigger -Hostname $host_name -Description $Description -Token $Token
         return 0
     }
 }
