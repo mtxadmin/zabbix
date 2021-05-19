@@ -175,7 +175,7 @@ Experienced the following operational errors trying to retrieve replication info
 # https://serverfault.com/questions/475774/repadmin-gives-operational-error-58
 #>
 
-$repadmin_status = 1; $repadmin_error = ""  # 1=ok, 0=error
+$repadmin_status = 1; $repadmin_error = "Ok"  # 1=ok, 0=error
 if ($output_repadmin -join "`n" -match "Experienced the following operational errors trying to retrieve replication information:") {
     $repadmin_error = "Experienced the following operational errors trying to retrieve replication information: " + (($output_repadmin -join "`n" -split "Experienced the following operational errors trying to retrieve replication information:")[1]).Trim()
     $repadmin_status = 0
