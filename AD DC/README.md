@@ -4,7 +4,7 @@ The script sends results of AD DC diagnostic tests to Zabbix.
 
 Script automatically makes all items on Zabbix server through API. You don't have to make them manually.
 
-This solution based on Microsoft dcdiag.exe utility which exists on a server with Domain Controller role and Microsoft Powershell which embedded in Windows.
+This solution based on Microsoft dcdiag.exe and repadmin.exe utilities which exist on a server with Domain Controller role and Microsoft Powershell which embedded in Windows.
 
 
 ## Installation:
@@ -130,4 +130,3 @@ and
          ......................... &ltDOMAIN> passed test Intersite
 	 </pre>
 </details>
-
