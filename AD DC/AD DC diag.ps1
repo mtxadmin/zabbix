@@ -32,7 +32,7 @@ Clear-Host
 
 # Let's take all dcdiag output
 #$output     = dcdiag
-$output_full = dcdiag /c
+$output_dcdiag_full = dcdiag /c
 
 # dcdiag / c : Comprehensive, runs all tests, including non-default tests but excluding DcPromo and RegisterInDNS. Can use with /skip
 # 
@@ -48,7 +48,7 @@ $output_full = dcdiag /c
 
 
 
-$output_full -match "(failed|passed) test "  # the space is needed
+$output_dcdiag_full -match "(failed|passed) test "  # the space is needed
 <#
          ......................... <DC> passed test Connectivity
          ......................... <DC> passed test Advertising
@@ -86,7 +86,7 @@ $output_full -match "(failed|passed) test "  # the space is needed
          ......................... <DOMAIN> passed test Intersite
 #>
 
-$output_full -match "(failed|passed) test " -replace "\s+\.+\s+" | % {
+$output_dcdiag_full -match "(failed|passed) test " -replace "\s+\.+\s+" | % {
     $string_src = $_
 
     if ($string_src -notmatch $env:COMPUTERNAME) {
