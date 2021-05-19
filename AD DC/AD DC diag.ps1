@@ -160,3 +160,69 @@ $output_dcdiag_full -match "(failed|passed) test " -replace "\s+\.+\s+" | % {
         }
     }
 }
+
+
+# Testing for replication errors
+# https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/cc770963(v=ws.11)
+$output_repadmin = repadmin -replsummary     
+
+<#
+Experienced the following operational errors trying to retrieve replication information:
+
+          58 - <DC FQDN>
+
+# https://social.technet.microsoft.com/Forums/windowsserver/en-US/69690286-7493-44bd-98df-7dead5fae680/repadmin-check-sshows-replication-error-58
+# https://serverfault.com/questions/475774/repadmin-gives-operational-error-58
+#>
+
+$repadmin_status = 1; $repadmin_error = ""  # 1=ok, 0=error
+if ($output_repadmin -join "`n" -match "Experienced the following operational errors trying to retrieve replication information:") {
+    $repadmin_error = "Experienced the following operational errors trying to retrieve replication information: " + (($output_repadmin -join "`n" -split "Experienced the following operational errors trying to retrieve replication information:")[1]).Trim()
+    $repadmin_status = 0
+}
+
+$item_name  = "AD DC $env:computername repadmin status"
+$item_key   = $item_name -replace " ","_"
+$item_name2 = "AD DC $env:computername repadmin error"
+$item_key2  = $item_name2 -replace " ","_"
+Write-Host "Item name: " -ForegroundColor Green -NoNewline; Write-Host $item_name
+Write-Host "Item key: "  -ForegroundColor Green -NoNewline; Write-Host $item_key
+
+switch ($Mode) {
+    "Setup" {
+        # Preparing
+        if (-not $token) { $token = Zabbix-GetAuthToken -User $user -Password $password }
+        $hostid = Zabbix-GetHostIdByName -HostName $env:COMPUTERNAME -Token $token
+            
+        # Creating item
+        Zabbix-CreateItem -HostId $hostid -ItemName $item_name -ItemKey $item_key -ItemValueType 3 -Token $token
+        # and text
+        Zabbix-CreateItem -HostId $hostid -ItemName $item_name2 -ItemKey $item_key2 -ItemValueType 4 -Token $token
+
+        # Creating trigger for that item
+            <#  Priority/severity:
+                0 - (default) not classified;
+                1 - information;
+                2 - warning;
+                3 - average;
+                4 - high;
+                5 - disaster. #>
+        $priority = 3
+        $description = ("AD DC $env:COMPUTERNAME - repadmin check error")
+        $expression  = "{$env:COMPUTERNAME`:$item_key.last()}<>1"
+        Zabbix-CreateTrigger -Description $description -Expression $expression -Priority $priority -Token $token
+
+        break
+    }
+
+    "Scheduler" {
+        # Keys should be added to zabbix already by setup mode.
+        $log_filename = "$root\AD DC.log"
+        $zabbix_proxy = Zabbix-GetProxyByHostname -Hostname $env:COMPUTERNAME
+        "C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $env:COMPUTERNAME -k $item_key -o $repadmin_status -vv"  > "$root\AD DC.log"
+        C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $env:COMPUTERNAME -k $item_key  -o $repadmin_status -vv > "$root\AD DC.log"
+        C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $env:COMPUTERNAME -k $item_key2 -o $repadmin_error -vv > "$root\AD DC.log"
+        break
+    }
+}
+
