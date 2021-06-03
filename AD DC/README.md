@@ -26,7 +26,7 @@ This solution based on Microsoft dcdiag.exe and repadmin.exe utilities which exi
     Now let's configure regular sending of monitoring data to these keys
 
 3. Add script to Windows task scheduler:<br>
-   Import task from "AD DC diad monitoring.xml" file
+   Import task from "AD DC diag monitoring.xml" file
 <details>
     <summary>
         OR Create it manually (there is a caveat here if you want use SYSTEM account)
