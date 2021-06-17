@@ -81,7 +81,7 @@ $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","http
         # Block: send/create certificate days to expire
         $item_name = "Cert " + $domain_name + " expiring days"
         $item_key  = "Cert_" + $domain_key  + "_expiring_days"
-        $item_value_type = 3
+        $item_value_type = 0  # don't set it to 3 (numeric unsigned) - when overdue it will be negative number and "unsupported"
         <#  value_type:
             0 - numeric float;
             1 - character;
