@@ -88,7 +88,7 @@ $urls | ? {$_} | ? {$_ -notmatch "^#"} |? {$_.trim() -replace ".*https://","http
             2 - log;
             3 - numeric unsigned;
             4 - text. #>
-        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType 3 -ItemValue $cert_days -Token $token -Mode $Mode
+        Zabbix-AddOrSendKey -HostName $host_name -ItemName $item_name -ItemKey $item_key -ItemValueType $item_value_type -ItemValue $cert_days -Token $token -Mode $Mode
         
         switch ($Mode) {
             "Setup" {
