@@ -71,3 +71,5 @@ This solution based on Microsoft Powershell which embedded in Windows.
 
 5. Check that zabbix server correctly receives data (see Latest data, Hosts: your host, Name: AD)
 
+
+Note: Shown backlog count can be maximum of 100, while on server it can be much more. This is Microsoft restriction, see https://docs.microsoft.com/en-us/powershell/module/dfsr/get-dfsrbacklog
