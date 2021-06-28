@@ -71,4 +71,4 @@ This solution based on Microsoft Powershell which embedded in Windows.
 
 4. Run created task and see that status changed to Ready and Last Run Result is (0x0)
 
-5. Check that zabbix server correctly receives data (see Latest data, Hosts: your host, Name: AD)
+5. Check that zabbix server correctly receives data (see Latest data, Hosts: your host, Name: DFS)
