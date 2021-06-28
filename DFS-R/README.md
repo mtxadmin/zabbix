@@ -6,6 +6,8 @@ Script detects all DFS-R folders on server, and automatically makes all items on
 
 This solution based on Microsoft Powershell which embedded in Windows.
 
+*(Note: Shown backlog count can be maximum of 100, while on server it can be much more. This is Microsoft restriction, see https://docs.microsoft.com/en-us/powershell/module/dfsr/get-dfsrbacklog)*
+
 
 ## Installation:
 
@@ -70,6 +72,3 @@ This solution based on Microsoft Powershell which embedded in Windows.
 4. Run created task and see that status changed to Ready and Last Run Result is (0x0)
 
 5. Check that zabbix server correctly receives data (see Latest data, Hosts: your host, Name: AD)
-
-
-Note: Shown backlog count can be maximum of 100, while on server it can be much more. This is Microsoft restriction, see https://docs.microsoft.com/en-us/powershell/module/dfsr/get-dfsrbacklog
