@@ -19,7 +19,7 @@ This solution based on Microsoft Powershell which embedded in Windows.
     - Open check_ssl_certs.ps1
     - Edit first line of script with $zabbix_server_url variable. Save script.
     - Tailor function Zabbix-GetProxyByHostname for your infrastructure and naming conventions.
-    - Set $user and $password variables in command line. They only need in setup run, do not add them to script for security reasons. 
+    - Set $user and $password variables in command line (they are case-sensitive!). They only need in setup run, do not add them to script for security reasons. 
     - Run check_ssl_certs.ps1
     - Check for errors
     - Script will list all HTTPS urls from text file and add appropriate keys in zabbix (via Zabbix API)
