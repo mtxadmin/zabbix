@@ -19,7 +19,7 @@ This solution based on Microsoft Powershell which embedded in Windows.
     - Open DFS-R_backlog.ps1
     - Edit first line of script with $zabbix_server_url variable. Save script.
     - Tailor function Zabbix-GetProxyByHostname for your infrastructure and naming conventions.
-    - Set $user and $password variables in command line. They only need in setup run, do not add them to script for security reasons. 
+    - Set $user and $password variables in command line (they are case-sensitive!). They only need in setup run, do not add them to script for security reasons. 
     - Run DFS-R_backlog.ps1
     - Check for errors
 
