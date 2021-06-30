@@ -4,6 +4,7 @@
 function Zabbix-GetAuthToken ([String]$User,[String]$Password) {
     # Authentication
     # https://stackoverflow.com/questions/17325293/invoke-webrequest-post-with-parameters
+    # $User is case sensitive!
 $post_params = @"
 {
     "jsonrpc": "2.0",
