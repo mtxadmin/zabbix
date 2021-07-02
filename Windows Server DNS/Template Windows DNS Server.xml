@@ -1,0 +1,1178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-07-02T18:00:00Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Windows DNS Server</template>
+            <name>Template Windows DNS Server</name>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>DNS Server</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>DNS Server</name>
+                    <key>net.dns</key>
+                    <delay>30</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(,0)}=0</expression>
+                            <name>DNS Server is down</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Windows DNS Server - DNS64 AAAA - Synthesized records</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS64 Global\AAAA - Synthesized records&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - DNS64 AAAA queries - Failed</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS64 Global\AAAA queries - Failed&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - DNS64 AAAA queries - Successful</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS64 Global\AAAA queries - Successful&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - DNS64 IP6.ARPA queries - Matched</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS64 Global\IP6.ARPA queries - Matched&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - DNS64 Other queries - Failed</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS64 Global\Other queries - Failed&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - DNS64 Other queries - Successful</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS64 Global\Other queries - Successful&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - AXFR Request Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\AXFR Request Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - AXFR Request Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\AXFR Request Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - AXFR Response Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\AXFR Response Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - AXFR Success Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\AXFR Success Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - AXFR Success Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\AXFR Success Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Caching Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Caching Memory&quot;,300]</key>
+                    <delay>120</delay>
+                    <units>Bytes</units>
+                    <description>The total amount of system memory in use by the DNS Server service for caching.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Database Node Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Database Node Memory&quot;,300]</key>
+                    <delay>120</delay>
+                    <units>Bytes</units>
+                    <description>The total amount of system memory in use by the DNS Server service for database nodes.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Data Flushes/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Data Flushes/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Data Flush Pages/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Data Flush Pages/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update NoOperation</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update NoOperation&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update NoOperation/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update NoOperation/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update Queued</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update Queued&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update Rejected</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update Rejected&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update TimeOuts</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update TimeOuts&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update Written to Database</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update Written to Database&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Dynamic Update Written to Database/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Dynamic Update Written to Database/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR Request Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR Request Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR Request Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR Request Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR Response Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR Response Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR Success Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR Success Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR Success Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR Success Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR TCP Success Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR TCP Success Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - IXFR UDP Success Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\IXFR UDP Success Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Nbstat Memory</name>
+                    <key>perf_counter[&quot;\DNS\Nbstat Memory&quot;,300]</key>
+                    <delay>120</delay>
+                    <units>Bytes</units>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Notify Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Notify Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The number of notifies received by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Notify Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Notify Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The number of notifies sent by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped Bad Socket</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped Bad Socket&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped Bad Socket/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped Bad Socket/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped By Policy</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped By Policy&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped By Policy/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped By Policy/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped By Response Rate Limiting</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped By Response Rate Limiting&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped By Response Rate Limiting/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped By Response Rate Limiting/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped Send</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped Send&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped Send/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped Send/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped Total</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped Total&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Query Dropped Total/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Query Dropped Total/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Record Flow Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Record Flow Memory&quot;,300]</key>
+                    <delay>120</delay>
+                    <units>Bytes</units>
+                    <description>The total amount of system memory in use by the DNS Server service for record flow.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Recursive Queries</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Recursive Queries&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The number of recursive queries sent by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Recursive Queries/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Recursive Queries/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The number of recursive queries sent by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Recursive Query Failure</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Recursive Query Failure&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of recursive query failures.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Recursive Query Failure/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Recursive Query Failure/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number of recursive query failures.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Recursive Send TimeOuts</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Recursive Send TimeOuts&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>Number of recursive queries timeouts sent by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Recursive TimeOut/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Recursive TimeOut/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>Number of recursive queries timeouts sent by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Responses Suppressed</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Responses Suppressed&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Responses Suppressed/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Responses Suppressed/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Secure Update Failure</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Secure Update Failure&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of secure updates failed on the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Secure Update Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Secure Update Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Secure Update Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Secure Update Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - TCP Message Memory</name>
+                    <key>perf_counter[&quot;\DNS\TCP Message Memory&quot;,300]</key>
+                    <delay>120</delay>
+                    <units>Bytes</units>
+                    <description>The total TCP message memory used by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - TCP Query Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\TCP Query Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of TCP queries received by the DNS server</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - TCP Query Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\TCP Query Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number of TCP queries received by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - TCP Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\TCP Response Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The number of TCP responses sent by the DNS server</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - TCP Response Sent/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\TCP Response Sent/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The number of TCP responses sent by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Total Query Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Total Query Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of queries received by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Total Query Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Total Query Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number of queries received by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Total Remote Inflight Queries</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Total Remote Inflight Queries&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Total Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Total Response Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number responses sent by the DNS server</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Total Response Sent/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Total Response Sent/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number responses sent by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - UDP Message Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\UDP Message Memory&quot;,300]</key>
+                    <delay>120</delay>
+                    <units>Bytes</units>
+                    <description>The total UDP message memory used by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - UDP Query Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\UDP Query Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of UDP queries received by the DNS server</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - UDP Query Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\UDP Query Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The total number of UDP queries received by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - UDP Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\UDP Response Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The number of UDP responses sent by the DNS server</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - UDP Response Sent/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\UDP Response Sent/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <description>The number of UDP responses sent by the DNS server per second</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Unmatched Responses Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Unmatched Responses Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Lookup Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Lookup Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Lookup Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Lookup Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Response Sent/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Response Sent/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Reverse Lookup Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Reverse Lookup Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Reverse Lookup Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Reverse Lookup Received/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Reverse Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Reverse Response Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - WINS Reverse Response Sent/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\WINS Reverse Response Sent/sec&quot;,300]</key>
+                    <delay>60</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Zone Transfer Failure</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Zone Transfer Failure&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of failed zone transfers of the master DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Zone Transfer Request Received</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Zone Transfer Request Received&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The number of zone transfer requests received by the DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Zone Transfer SOA Request Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Zone Transfer SOA Request Sent&quot;,300]</key>
+                    <delay>120</delay>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows DNS Server - Zone Transfer Success</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\DNS\Zone Transfer Success&quot;,300]</key>
+                    <delay>120</delay>
+                    <description>The total number of successful zone transfers of the master DNS server.</description>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Windows Server DNS Service</name>
+                    <key>service_state[DNS]</key>
+                    <delay>30</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>DNS Server</name>
+                        </application>
+                    </applications>
+                    <valuemap>
+                        <name>Windows service state</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <expression>{last(,0)}&lt;&gt;0</expression>
+                            <name>Windows DNS Server service is down</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+        </template>
+    </templates>
+    <graphs>
+        <graph>
+            <name>DNS Errors</name>
+            <graph_items>
+                <graph_item>
+                    <color>FF3333</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Recursive Query Failure&quot;,300]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>00C800</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Secure Update Failure&quot;,300]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>2</sortorder>
+                    <color>0000C8</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Zone Transfer Failure&quot;,300]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>DNS Query Rates</name>
+            <graph_items>
+                <graph_item>
+                    <color>FF3333</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Total Query Received/sec&quot;,300]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>DNS Query Totals</name>
+            <graph_items>
+                <graph_item>
+                    <color>FF3333</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Total Query Received&quot;,300]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>DNS Server Memory Utilization</name>
+            <graph_items>
+                <graph_item>
+                    <color>FF3333</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Caching Memory&quot;,300]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>1</sortorder>
+                    <color>00C800</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Database Node Memory&quot;,300]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>3</sortorder>
+                    <color>C800C8</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\Record Flow Memory&quot;,300]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>4</sortorder>
+                    <color>00C8C8</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\TCP Message Memory&quot;,300]</key>
+                    </item>
+                </graph_item>
+                <graph_item>
+                    <sortorder>5</sortorder>
+                    <color>C8C800</color>
+                    <item>
+                        <host>Template Windows DNS Server</host>
+                        <key>perf_counter[&quot;\DNS\UDP Message Memory&quot;,300]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+    <value_maps>
+        <value_map>
+            <name>Windows service state</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Running</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Paused</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>Start pending</newvalue>
+                </mapping>
+                <mapping>
+                    <value>3</value>
+                    <newvalue>Pause pending</newvalue>
+                </mapping>
+                <mapping>
+                    <value>4</value>
+                    <newvalue>Continue pending</newvalue>
+                </mapping>
+                <mapping>
+                    <value>5</value>
+                    <newvalue>Stop pending</newvalue>
+                </mapping>
+                <mapping>
+                    <value>6</value>
+                    <newvalue>Stopped</newvalue>
+                </mapping>
+                <mapping>
+                    <value>7</value>
+                    <newvalue>Unknown</newvalue>
+                </mapping>
+                <mapping>
+                    <value>255</value>
+                    <newvalue>No such service</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
