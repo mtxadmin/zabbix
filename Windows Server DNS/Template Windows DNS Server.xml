@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-07-02T18:00:00Z</date>
+    <date>2021-07-06T18:00:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -24,6 +24,7 @@
             <items>
                 <item>
                     <name>DNS Server</name>
+                    <type>ZABBIX_ACTIVE</type>
                     <key>net.dns</key>
                     <delay>30</delay>
                     <applications>
@@ -391,6 +392,7 @@
                 </item>
                 <item>
                     <name>Windows DNS Server - Nbstat Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
                     <key>perf_counter[&quot;\DNS\Nbstat Memory&quot;,300]</key>
                     <delay>120</delay>
                     <units>Bytes</units>
@@ -687,6 +689,7 @@
                 </item>
                 <item>
                     <name>Windows DNS Server - TCP Message Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
                     <key>perf_counter[&quot;\DNS\TCP Message Memory&quot;,300]</key>
                     <delay>120</delay>
                     <units>Bytes</units>
@@ -1012,6 +1015,7 @@
                 </item>
                 <item>
                     <name>Windows Server DNS Service</name>
+                    <type>ZABBIX_ACTIVE</type>
                     <key>service_state[DNS]</key>
                     <delay>30</delay>
                     <value_type>FLOAT</value_type>
