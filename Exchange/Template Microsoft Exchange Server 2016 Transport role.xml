@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-04-20T10:59:22Z</date>
+    <date>2021-08-05T15:16:04Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -28,6 +28,34 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                 </application>
             </applications>
             <items>
+                <item>
+                    <name>Back pressure events</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15004|15005),,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                </item>
+                <item>
+                    <name>Back pressure level</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15004|15005|10000000),,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>REGEX</type>
+                            <params>Resource pressure (in|de)creased from .* to (.*)
+\2</params>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>Back pressure events critical</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15006|15007),,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                </item>
                 <item>
                     <name>Active Mailbox Delivery Queue Length</name>
                     <type>ZABBIX_ACTIVE</type>
@@ -176,6 +204,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Aggregate Shadow Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Aggregate Shadow Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Shadow Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Aggregate Shadow Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Delay Queue Length</name>
@@ -189,6 +237,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Delay Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Delay Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Delay Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Delay Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>External Active Remote Delivery Queue Length</name>
@@ -202,6 +270,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>External Active Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>External Active Remote Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>External Active Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>External Aggregate Delivery Queue Length (All External Queues)</name>
@@ -215,6 +303,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>External Aggregate Delivery Queue Length (All External Queues)</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>External Aggregate Delivery Queue Length (All External Queues)</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Aggregate Delivery Queue Length (All External Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>External Aggregate Delivery Queue Length (All External Queues)</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>External Largest Delivery Queue Length</name>
@@ -228,6 +336,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>External Largest Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>External Largest Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>External Largest Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>External Largest Unlocked Delivery Queue Length</name>
@@ -240,6 +368,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>External Largest Unlocked Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>External Largest Unlocked Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Unlocked Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>External Largest Unlocked Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>External Retry Remote Delivery Queue Length</name>
@@ -253,6 +401,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>External Retry Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>External Retry Remote Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>External Retry Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Internal Active Remote Delivery Queue Length</name>
@@ -266,6 +434,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Internal Active Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Internal Active Remote Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Internal Active Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Internal Aggregate Delivery Queue Length (All Internal Queues)</name>
@@ -279,6 +467,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Internal Aggregate Delivery Queue Length (All Internal Queues)</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Internal Aggregate Delivery Queue Length (All Internal Queues)</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Aggregate Delivery Queue Length (All Internal Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Internal Aggregate Delivery Queue Length (All Internal Queues)</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Internal Largest Delivery Queue Length</name>
@@ -292,6 +500,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Internal Largest Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Internal Largest Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Internal Largest Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Internal Largest Unlocked Delivery Queue Length</name>
@@ -305,6 +533,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Internal Largest Unlocked Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Internal Largest Unlocked Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Unlocked Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Internal Largest Unlocked Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Internal Retry Remote Delivery Queue Length</name>
@@ -318,6 +566,26 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <name>Internal Retry Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>Internal Retry Remote Delivery Queue Length</name>
+                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Internal Retry Remote Delivery Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Items Completed Delivery Per Second</name>
@@ -792,6 +1060,14 @@ Is in Exchange 2016 performance counters</description>
                             <name>Exchange Transport</name>
                         </application>
                     </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <name>Shadow Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Submission Queue Deferred Message Count</name>
@@ -1052,7 +1328,7 @@ Is in Exchange 2016 performance counters</description>
             <macros>
                 <macro>
                     <macro>{$EXCHANGE_TRANSPORT_QUEUES_AVG}</macro>
-                    <value>80</value>
+                    <value>100</value>
                 </macro>
                 <macro>
                     <macro>{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</macro>
