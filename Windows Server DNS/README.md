@@ -2,7 +2,7 @@
 
 Zabbix template for monitoring DNS parameters of Windows Server DNS
 
-Format: zabbix 5.0 xml. It should also work on 5.2 (see [docs](https://www.zabbix.com/documentation/current/manual/xml_export_import/media) about template formats)
+Format: zabbix 5.0 xml. It should also work on 5.2 and above (see [docs](https://www.zabbix.com/documentation/current/manual/xml_export_import/media) about template formats)
 
 Tested on Windows Server 2016
 
