@@ -34,6 +34,7 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                     <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15004|15005),,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
+                    <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
                 </item>
                 <item>
                     <name>Back pressure level</name>
@@ -41,6 +42,7 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                     <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15004|15005|10000000),,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
+                    <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
@@ -55,6 +57,7 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                     <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15006|15007),,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
+                    <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
                 </item>
                 <item>
                     <name>Active Mailbox Delivery Queue Length</name>
