@@ -54,8 +54,8 @@ Unreachable Queue Length|perf_counter["\MSExchangeTransport Queues(_total)\Unrea
 
 | Macros | Default value |
 --- | ---
-|{$EXCHANGE_TRANSPORT_QUEUES_AVG} | 100 |
-|{$EXCHANGE_TRANSPORT_QUEUES_HIGH}| 150 |
+|{$EXCHANGE_TRANSPORT_QUEUES_AVG} | 250 |
+|{$EXCHANGE_TRANSPORT_QUEUES_HIGH}| 1000 |
 
 You can override these values freely - just set macros with such names for corresponding hosts in your infrastructure
 
