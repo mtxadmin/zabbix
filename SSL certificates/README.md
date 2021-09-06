@@ -32,7 +32,7 @@ This solution based on Microsoft Powershell which embedded in Windows.
 
 	"When running the task, use the following user account:"<br>
 	Enter some account. You don't have to enter account with Admin rights here<br>
-	DO NOT set chechbox "Do not store password"<br>
+	DO NOT set checkbox "Do not store password"<br>
 	I suppose NT AUTHORITY/SYSTEM will work fine
 	
 	- "Run whether user is logged on or not"
