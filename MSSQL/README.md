@@ -10,9 +10,9 @@ Most SQL scripts and some parameters are found on various MSSQL-oriented forums.
 
 ## Installation:
 
-1. Make "sql" subfolder in Zabbix agent folder on needed server - not Zabbix server, but MSSQL monitored server, every. For instance, c:\zabbix\sql\
-2. Copy all *.sql scripts to that "sql" subfolder
-3. Copy pslaunch.cmd and run_sql_script.ps1 files to Zabbix agent folder
+1. Make **sql** subfolder in Zabbix agent folder on needed server - not Zabbix server, but MSSQL monitored server, every. For instance, c:\zabbix\sql\
+2. Copy all *.sql scripts to that **sql** subfolder
+3. Copy pslaunch.cmd and run_sql_script.ps1 files to Zabbix agent folder (c:\zabbix\ )
 4. Edit zabbix_agentd.conf :
 -  find **Server:** string and add there **,127.0.0.1,::1** to the end of line.<br>
 For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Server=10.0.0.100,10.0.0.101,127.0.0.1,::1**
