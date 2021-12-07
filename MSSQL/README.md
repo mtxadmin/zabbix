@@ -24,6 +24,6 @@ For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Ser
 7. Restart Zabbix agent service on this server
 8. In Zabbix web interface, apply the imported template **Template DB MSSQL** to the host
 
-## Notes:
+### Technical notes:
 
 This template is intended for single DB instance on a server. Some servers may contain several instances with non-default names (MSSQL$MEGABASE, MSSQL$SUPERBASE, etc). For every such server, you have to make a different template and edit all the names - SQL Server service name, SQL Agent service name, performance counters. (Maybe there is a better way, with discoveries?)
