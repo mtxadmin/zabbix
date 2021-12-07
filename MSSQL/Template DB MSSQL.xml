@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2021-12-07T12:00:00Z</date>
+    <groups>
+    </groups>
+    <templates>
+        <template>
+            <template>Template DB MSSQL</template>
+            <name>Template DB MSSQL</name>
+            <description>Additional template for Microsoft SQL servers. Items, triggers, etc. Including backup events and errors.</description>
+            <groups>
+            </groups>
+            <applications>
+                <application>
+                    <name>MS SQL</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>SQL: Error events - availability group</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,&quot;availability group&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*)$&quot;,,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <description>All sql errors but about availability group syncs</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Error events</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,&quot;^((?!availability group).)*$&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*|MSDPM)$&quot;,,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <description>All sql errors but about availability group syncs</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(BACKUP failed,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Backup error events</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                        <trigger>
+                            <expression>{regexp(,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Error events</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Backup errors events 2</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,&quot;Error&quot;,&quot;SQLISPackage[0-9]+&quot;,12291,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Backup error events (from jobs)</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <description>SQL 2017 - SQLISPackage140</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Backup information events v2 1</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,&quot;Information&quot;,&quot;SQLISPackage[0-9]+&quot;,&quot;12288|12289&quot;,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <description>EventID 12288 - Job started&#13;
+EventID 12289 - Job successfully finished</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(finished successfully,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Backup informational events from jobs - finished</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <description>SQL 2017 - SQLISPackage140</description>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Backup information events v2 2.1</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,&quot;Information&quot;,&quot;SQLSERVERAGENT&quot;,208,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(The Job was invoked by User,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Backup informational events from jobs - manually started</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Backup information events v1</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,&quot;Information&quot;,MSSQLSERVER,3014,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <description>EventID 3014 - BACKUP DATABASE successfully processed</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(BACKUP DATABASE successfully processed [1-9].*)}=1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Backup informational events</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <status>DISABLED</status>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Backup information events v2 2.2</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,&quot;Warning&quot;,&quot;SQLSERVERAGENT&quot;,208,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: % Processor Time</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\Process(sqlservr)\% Processor Time&quot;]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: RAM Private Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\Process(sqlservr)\Private Bytes&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: RAM Working Set</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\Process(sqlservr)\Working Set&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Page Reads/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[\Memory\Page Reads/sec]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Page writes/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[\SQLServer:Buffer Manager\Page writes/sec]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Log Bytes Flushed/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[\SQLServer:Databases(_Total)\Log Bytes Flushed/sec]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Batch Requests/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[\SQLServer:SQL Statistics\Batch Requests/sec]</key>
+                    <delay>5m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Compilations/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[\SQLServer:SQL Statistics\SQL Compilations/sec]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Re-Compilations/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[\SQLServer:SQL Statistics\SQL Re-Compilations/sec]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Service State - SQL Server</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>service_state[MSSQLSERVER]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Service State - SQL Agent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>service_state[SQLServerAgent]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Blocks</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[Blocks.sql]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: CheckpointStall</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[CheckpointStall.sql]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Low Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[LowMemory.sql]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: N of memory dumps on server</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[MemoryDumps.sql]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: PageLifeExpectancy</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[PageLifeExpectancy.sql]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: ProcessesBlocked</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[ProcessesBlocked.sql]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: SQLMemory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[SQLMemory.sql]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: N of suspect pages</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[SuspectPages.sql]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: SuspendedRequests</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[SuspendedRequests.sql]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SQL: Waiting Tasks</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[WaitingTasks.sql]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;=150</expression>
+                            <name>MSSQL: SQL waiting tasks more than 150</name>
+                            <opdata>Current value: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>MSSQL: SQL waiting tasks more than 500</name>
+                                    <expression>{Template DB MSSQL:sql.script[WaitingTasks.sql].min(#3)}&gt;=500</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#3)}&gt;=500</expression>
+                            <name>MSSQL: SQL waiting tasks more than 500</name>
+                            <opdata>Current value: {ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$MEMORY.UTIL.MAX}</macro>
+                    <value>97</value>
+                    <description>Macro for memory override for SQL servers - they are typically filled RAM with data, this is pretty normal.</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template DB MSSQL:eventlog[Application,,&quot;Warning&quot;,&quot;SQLSERVERAGENT&quot;,208,,skip].regexp(Backup job failed,5m)}&lt;&gt;0</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{Template DB MSSQL:eventlog[Application,,&quot;Information&quot;,&quot;SQLSERVERAGENT&quot;,208,,skip].nodata(5m)}=1</recovery_expression>
+            <name>MSSQL: Backup informational events from jobs - failed</name>
+            <priority>HIGH</priority>
+        </trigger>
+        <trigger>
+            <expression>{Template DB MSSQL:eventlog[Application,&quot;availability group&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*)$&quot;,,,skip].regexp(,5m)}&lt;&gt;0</expression>
+            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+            <recovery_expression>{Template DB MSSQL:eventlog[Application,&quot;^((?!availability group).)*$&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*|MSDPM)$&quot;,,,skip].nodata(5m)}=1</recovery_expression>
+            <name>MSSQL: Error events - availability group</name>
+            <opdata>{ITEM.LASTVALUE1}</opdata>
+            <priority>HIGH</priority>
+            <manual_close>YES</manual_close>
+        </trigger>
+    </triggers>
+    <graphs>
+        <graph>
+            <name>SQL: % Processor Time</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template DB MSSQL</host>
+                        <key>perf_counter[&quot;\Process(sqlservr)\% Processor Time&quot;]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>SQL: Batch Requests/sec</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template DB MSSQL</host>
+                        <key>perf_counter[\SQLServer:SQL Statistics\Batch Requests/sec]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <name>SQL: Compilations/sec</name>
+            <graph_items>
+                <graph_item>
+                    <color>199C0D</color>
+                    <item>
+                        <host>Template DB MSSQL</host>
+                        <key>perf_counter[\SQLServer:SQL Statistics\SQL Compilations/sec]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>
