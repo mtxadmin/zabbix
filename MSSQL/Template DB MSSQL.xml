@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-12-07T12:00:00Z</date>
+    <date>2022-04-29T12:00:00Z</date>
     <groups>
     </groups>
     <templates>
@@ -33,7 +33,7 @@
                 <item>
                     <name>SQL: Error events</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>eventlog[Application,&quot;^((?!availability group).)*$&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*|MSDPM)$&quot;,,,skip]</key>
+                    <key>eventlog[Application,&quot;^((?!availability group).)*$&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*|MSDPM|FailoverClustering)$&quot;,,,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
                     <description>All sql errors but about availability group syncs</description>
@@ -170,6 +170,52 @@ EventID 12289 - Job successfully finished</description>
                             <name>MS SQL</name>
                         </application>
                     </applications>
+                </item>
+                <item>
+                    <name>SQL: Cluster error events 2</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Microsoft-Windows-FailoverClustering/Operational,,&quot;Critical|Errors&quot;,,,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Cluster error events 2</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Cluster error events 1</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[System,,&quot;Critical|Errors&quot;,FailoverClustering,,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>MSSQL: Cluster error events 1</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>SQL: % Processor Time</name>
@@ -443,7 +489,7 @@ EventID 12289 - Job successfully finished</description>
         <trigger>
             <expression>{Template DB MSSQL:eventlog[Application,&quot;availability group&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*)$&quot;,,,skip].regexp(,5m)}&lt;&gt;0</expression>
             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-            <recovery_expression>{Template DB MSSQL:eventlog[Application,&quot;^((?!availability group).)*$&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*|MSDPM)$&quot;,,,skip].nodata(5m)}=1</recovery_expression>
+            <recovery_expression>{Template DB MSSQL:eventlog[Application,&quot;^((?!availability group).)*$&quot;,&quot;Critical|Error|Warning&quot;,&quot;^(MSSQLSERVER|SQLSERVERAGENT|SQLAgent.*|MSDPM|FailoverClustering)$&quot;,,,skip].nodata(5m)}=1</recovery_expression>
             <name>MSSQL: Error events - availability group</name>
             <opdata>{ITEM.LASTVALUE1}</opdata>
             <priority>HIGH</priority>
