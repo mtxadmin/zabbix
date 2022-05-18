@@ -1,0 +1,335 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-05-18T12:00:00Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Windows Scheduled Tasks</template>
+            <name>Template Windows Scheduled Tasks</name>
+            <description>Discover and monitor Windows scheduled tasks. Need to add powershell script to agent on hosts.</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Scheduled tasks</name>
+                </application>
+            </applications>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Discovery Task Scheduler</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>TaskSchedulerMonitoring[DiscoverCustomTasks]</key>
+                    <delay>60</delay>
+                    <lifetime>0</lifetime>
+                    <description>Discover all Windows scheduled tasks. This discovery needs powershell script in the agent host.</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Task: {#APPTASKS}: Last Result</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}]</key>
+                            <delay>120</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <description>Last Result of Task, string hex value&#13;
+ in most cases 0 = succesful</description>
+                            <applications>
+                                <application>
+                                    <name>Scheduled tasks</name>
+                                </application>
+                            </applications>
+                            <valuemap>
+                                <name>Scheduled Task</name>
+                            </valuemap>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Task: {#APPTASKS}: Last Run Time</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>TaskSchedulerMonitoring[TaskLastRunTime,{#APPTASKS}]</key>
+                            <delay>120</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Last Run Time of Task as an unixtimestamp</description>
+                            <applications>
+                                <application>
+                                    <name>Scheduled tasks</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Task: {#APPTASKS}: Next Run Time</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>TaskSchedulerMonitoring[TaskNextRunTime,{#APPTASKS}]</key>
+                            <delay>120</delay>
+                            <trends>0</trends>
+                            <value_type>TEXT</value_type>
+                            <description>Next Run Time of Task</description>
+                            <applications>
+                                <application>
+                                    <name>Scheduled tasks</name>
+                                </application>
+                            </applications>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Task: {#APPTASKS}: Task State</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>TaskSchedulerMonitoring[TaskState,{#APPTASKS}]</key>
+                            <delay>120</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <description>TaskState, string value</description>
+                            <applications>
+                                <application>
+                                    <name>Scheduled tasks</name>
+                                </application>
+                            </applications>
+                            <valuemap>
+                                <name>Scheduled Task</name>
+                            </valuemap>
+                        </item_prototype>
+                    </item_prototypes>
+                    <trigger_prototypes>
+                        <trigger_prototype>
+                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}=&quot;Disabled&quot; or {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}=&quot;0x41302&quot;</expression>
+                            <name>Scheduled task {#APPTASKS} disabled</name>
+                            <status>DISABLED</status>
+                            <priority>AVERAGE</priority>
+                            <description>Trigger for detecting event when a task has been disabled.&#13;
+Such triggers created with disabled state</description>
+                        </trigger_prototype>
+                        <trigger_prototype>
+                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
+                            <name>Scheduled task {#APPTASKS} ended with error</name>
+                            <priority>AVERAGE</priority>
+                            <description>Excluded status codes:&#13;
+0 - Success&#13;
+0x41300 - Ready&#13;
+0x41301 - Running&#13;
+0x41302 - Disabled&#13;
+0x41303 - The task has not yet run</description>
+                        </trigger_prototype>
+                    </trigger_prototypes>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+    <value_maps>
+        <value_map>
+            <name>Scheduled Task</name>
+            <mappings>
+                <mapping>
+                    <value>0</value>
+                    <newvalue>Success</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x4131B</value>
+                    <newvalue>Not all task's triggers will start</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x4131C</value>
+                    <newvalue>Batch logon privilege needs to be enabled for the task principal</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41300</value>
+                    <newvalue>Ready</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41301</value>
+                    <newvalue>Running</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41302</value>
+                    <newvalue>Disabled</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41303</value>
+                    <newvalue>The task has not yet run</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41304</value>
+                    <newvalue>There are no more runs scheduled for this task</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41305</value>
+                    <newvalue>The task is not scheduled</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41306</value>
+                    <newvalue>The task is terminated</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41307</value>
+                    <newvalue>The task has no valid triggers</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41308</value>
+                    <newvalue>Event triggers do not have set run times</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41309</value>
+                    <newvalue>Task's trigger is not found</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x41325</value>
+                    <newvalue>The Task Scheduler service has asked the task to run</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x800704DD</value>
+                    <newvalue>The service is not available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004130A</value>
+                    <newvalue>Properties required to run this task have not been set</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004130B</value>
+                    <newvalue>There is no running instance of the task</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004130C</value>
+                    <newvalue>Task Scheduler service is not installed</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004130D</value>
+                    <newvalue>The task object could not be opened</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004130E</value>
+                    <newvalue>The task object is invalid</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004130F</value>
+                    <newvalue>Credentials became corrupted</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004131A</value>
+                    <newvalue>The task XML is malformed</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004131D</value>
+                    <newvalue>The task XML contains too many nodes of the same type</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004131E</value>
+                    <newvalue>The task cannot be started after the trigger end boundary</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8004131F</value>
+                    <newvalue>An instance of this task is already running</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x8007010B</value>
+                    <newvalue>The &quot;Start in&quot; directory can not be found</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041309</value>
+                    <newvalue>Task's trigger is not found</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041310</value>
+                    <newvalue>Unable to establish existence of the account specified</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041311</value>
+                    <newvalue>Corruption was detected in the Task Scheduler security database</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041312</value>
+                    <newvalue>Security services are available only on Windows NT</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041313</value>
+                    <newvalue>The task object version is either unsupported or invalid</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041314</value>
+                    <newvalue>Unsupported combination of account settings and run time options</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041315</value>
+                    <newvalue>The Task Scheduler Service is not running</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041316</value>
+                    <newvalue>The task XML contains an unexpected node</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041317</value>
+                    <newvalue>The task XML contains an element from an unexpected namespace</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041318</value>
+                    <newvalue>The task XML contains incorrect value or out of range</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041319</value>
+                    <newvalue>The task XML is missing a required element or attribute</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041320</value>
+                    <newvalue>The task will not run because the user is not logged on</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041321</value>
+                    <newvalue>The task image is corrupt or has been tampered with</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041322</value>
+                    <newvalue>The Task Scheduler service is not available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041323</value>
+                    <newvalue>The Task Scheduler service is too busy to handle your request</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041324</value>
+                    <newvalue>The task did not run due to a constraint in the task definition</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041326</value>
+                    <newvalue>The task is disabled</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041327</value>
+                    <newvalue>Task properties are not compatible with earlier Windows versions</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80041328</value>
+                    <newvalue>The task settings do not allow the task to start on demand</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80070002</value>
+                    <newvalue>One of the files is not available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0xA</value>
+                    <newvalue>Environment incorrect</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0xC000013A</value>
+                    <newvalue>The application terminated</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0xC06D007E</value>
+                    <newvalue>Unknown software exception</newvalue>
+                </mapping>
+                <mapping>
+                    <value>1</value>
+                    <newvalue>Incorrect or unknown function called</newvalue>
+                </mapping>
+                <mapping>
+                    <value>2</value>
+                    <newvalue>File not found</newvalue>
+                </mapping>
+            </mappings>
+        </value_map>
+    </value_maps>
+</zabbix_export>
