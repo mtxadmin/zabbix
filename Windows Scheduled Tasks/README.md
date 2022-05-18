@@ -23,7 +23,7 @@ Task are searched in the root. If you want, you can change search folder in the 
 -  find **Server:** string and add there **,127.0.0.1,::1** to the end of line.<br>
 For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Server=10.0.0.100,10.0.0.101,127.0.0.1,::1**
 -  add parameters to the end of file:<br>
-   UserParameter=TaskSchedulerMonitoring[*], powershell -Noprofile -ExecutionPolicy Bypass -File "C:\zabbix\scripts\DiscoverScheduledTasks.ps1"<br>
+   UserParameter=TaskSchedulerMonitoring[*], powershell -Noprofile -ExecutionPolicy Bypass -File "C:\zabbix\scripts\DiscoverScheduledTasks.ps1" "$1" "$2"<br>
    Timeout=20<br>
 4. Restart Zabbix agent service on this server
 5. In Zabbix web interface, apply the imported template **Windows Scheduled Tasks** to the host
