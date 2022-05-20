@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-04-26T10:00:00Z</date>
+    <groups>
+        <group>
+            <name>Windows Servers</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template OS Windows by Zabbix agent active - custom</template>
+            <name>Template OS Windows by Zabbix agent active - custom</name>
+            <description>Additional template for virtual servers on Windows Server platform</description>
+            <groups>
+                <group>
+                    <name>Windows Servers</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>Disk custom</name>
+                </application>
+                <application>
+                    <name>Eventlog</name>
+                </application>
+                <application>
+                    <name>Memory custom</name>
+                </application>
+                <application>
+                    <name>Network custom</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Event ID 1074: Log Reboot</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[System,,,User32,1074,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>Eventlog</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(has initiated the .* of computer)}=1 and {nodata(15m)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(15m)}=1</recovery_expression>
+                            <name>Log Reboot</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Free space E GB</name>
+                    <type>CALCULATED</type>
+                    <key>free_space_egb</key>
+                    <delay>3m</delay>
+                    <history>7d</history>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <units>mbps</units>
+                    <params>(last(vfs.fs.size\[E:,free\]]))/1073741824</params>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Free space F GB</name>
+                    <type>CALCULATED</type>
+                    <key>free_space_fgb</key>
+                    <delay>3m</delay>
+                    <history>7d</history>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <units>mbps</units>
+                    <params>(last(vfs.fs.size[F:,free]]))/1073741824</params>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Free space C GB</name>
+                    <type>CALCULATED</type>
+                    <key>free_space_gb</key>
+                    <delay>3m</delay>
+                    <history>7d</history>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <units>mbps</units>
+                    <params>(last(vfs.fs.size[C:,free]]))/1073741824</params>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Available GB</name>
+                    <type>CALCULATED</type>
+                    <key>Memory_Available_GB</key>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(perf_counter_en[&quot;\Memory\Available MBytes&quot;]))/1024</params>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Standby Cache GB</name>
+                    <type>CALCULATED</type>
+                    <key>Memory_Standby_Cache_GB</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <params>(last(perf_counter_en[&quot;\Memory\Standby Cache Core Bytes&quot;])+last(perf_counter_en[&quot;\Memory\Standby Cache Normal Priority Bytes&quot;])+last(perf_counter_en[&quot;\Memory\Standby Cache Reserve Bytes&quot;]))/1073741824</params>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Interface vmxnet3 Ethernet Adapter(Ethernet0): MBits sent in</name>
+                    <type>CALCULATED</type>
+                    <key>network_bits_sent_inmb</key>
+                    <delay>10m</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>mbps</units>
+                    <params>(last(net.if.in[&quot;vmxnet3 Ethernet Adapter&quot;]))/1000000</params>
+                    <applications>
+                        <application>
+                            <name>Network custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Interface vmxnet3 Ethernet Adapter(Ethernet0): MBits sent</name>
+                    <type>CALCULATED</type>
+                    <key>network_bits_sent_mb</key>
+                    <delay>10m</delay>
+                    <history>7d</history>
+                    <value_type>FLOAT</value_type>
+                    <units>mbps</units>
+                    <params>(last(net.if.out[&quot;vmxnet3 Ethernet Adapter&quot;]))/1000000</params>
+                    <applications>
+                        <application>
+                            <name>Network custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk: C: Avg. Disk sec/Read (234)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\234(C:)\208&quot;]</key>
+                    <delay>10m</delay>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk: C: Free Megabytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\LogicalDisk(C:)\Free Megabytes&quot;]</key>
+                    <delay>1h</delay>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Available MBytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Memory\Available MBytes&quot;]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Free &amp; Zero Page List Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Memory\Free &amp; Zero Page List Bytes&quot;]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Modified Page List Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Memory\Modified Page List Bytes&quot;]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Standby Cache Core Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Memory\Standby Cache Core Bytes&quot;]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Standby Cache Normal Priority Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Memory\Standby Cache Normal Priority Bytes&quot;]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Memory Standby Cache Reserve Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Memory\Standby Cache Reserve Bytes&quot;]</key>
+                    <delay>10m</delay>
+                    <applications>
+                        <application>
+                            <name>Memory custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Network: vmxnet3 Network Adapter Output Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Network Adapter(vmxnet3 Ethernet Adapter)\Output Queue Length&quot;]</key>
+                    <delay>5m</delay>
+                    <applications>
+                        <application>
+                            <name>Network custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Network: vmxnet3 Network Interface Output Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Network Interface(vmxnet3 Ethernet Adapter)\Output Queue Length&quot;]</key>
+                    <delay>5m</delay>
+                    <applications>
+                        <application>
+                            <name>Network custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk: Avg. Disk sec/Read</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[\234(_Total)\208]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk: Avg. Disk sec/Write</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[\234(_Total)\210]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk: C: Avg. Disk sec/Read (log)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[\LogicalDisk(C:)\Avg. Disk sec/Read]</key>
+                    <delay>10m</delay>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Disk: C: Avg. Disk sec/Read (phy)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[\PhysicalDisk(C:)\Avg. Disk sec/Read]</key>
+                    <delay>10m</delay>
+                    <status>DISABLED</status>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>Disk custom</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$SERVICE.NAME.NOT_MATCHES}</macro>
+                    <value>^(RemoteRegistry|MMCSS|(g|db)update|SysmonLog|sppsvc|gpsvc|MapsBroker|DoSvc|DiagTrack|TrustedInstaller|WSearch|WbioSrvc|ShellHWDetection|SCardSvr|CDPSvc|BITS|VSS|VeeamVssSupport|wuauserv|UsoSvc|swprv|SysMain|TrkWks|vm3dservice|WinDefend|VGAuthService)$</value>
+                    <description>Override to ignore non-important services. Here is limit by 256 symbols, so it divided to several parts</description>
+                </macro>
+                <macro>
+                    <macro>{$SERVICE.NAME.NOT_MATCHES_2}</macro>
+                    <value>^(.+(HPZ12|TELEMETRY)|(clr_optimiz|IntelAudio|YandexBrowser|OneSync|CDPUser|Wpn|igfxCUI|tiledata|Adobe|PowerBIReport|KL Deployment Wrapper).+)$</value>
+                    <description>Services with random parts in the names</description>
+                </macro>
+                <macro>
+                    <macro>{$SERVICE.NAME.NOT_MATCHES_3}</macro>
+                    <value>^(AGS(M|S)ervice|VMAuthdService|kate-agent|upnphost|TabletInputService|stisvc|SnSoftwareState|SnSrvService|update_service|download_service_client|SnHwSrv|SnicheckService|SnInstAgent|SnPolicySrv|ScAuthSvc|ScAgentWatchdogSvc2|OmsAgentGate|Test|PcaSvc)$</value>
+                    <description>Override to ignore non-important services, part 3</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
