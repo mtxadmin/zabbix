@@ -28,6 +28,10 @@ $TaskName = [string]$args[1]
 $CustomTasksPath="\"
 
 
+# Sometimes, the script crashes in error with  Import-Module ScheduledTasks (when trying to execute Get-ScheduledTask). Weird.
+# So, let's make error supression
+$ErrorActionPreference = "SilentlyContinue"
+
 # Seeing dates in millions of a seconds is very bad solution. Function here just for information
 function Convert-ToUnixDate ($Date) {
    $epoch = [timezone]::CurrentTimeZone.ToLocalTime([datetime]'1/1/1970')
