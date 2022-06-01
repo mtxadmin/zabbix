@@ -2,7 +2,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-05-18T12:00:00Z</date>
+    <date>2022-06-01T15:50:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -29,6 +29,35 @@
                     <type>ZABBIX_ACTIVE</type>
                     <key>TaskSchedulerMonitoring[DiscoverCustomTasks]</key>
                     <delay>60</delay>
+                    <filter>
+                        <evaltype>FORMULA</evaltype>
+                        <formula>A and B and C and D</formula>
+                        <conditions>
+                            <condition>
+                                <macro>{#APPTASKS}</macro>
+                                <value>User_Feed_Synchronization-</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>C</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#APPTASKS}</macro>
+                                <value>{$SCHEDULED.TASK.MATCHES}</value>
+                                <formulaid>A</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#APPTASKS}</macro>
+                                <value>{$SCHEDULED.TASK.NOT_MATCHES}</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>B</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#APPTASKS}</macro>
+                                <value>Adobe Acrobat Update Task</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>D</formulaid>
+                            </condition>
+                        </conditions>
+                    </filter>
                     <lifetime>0</lifetime>
                     <description>Discover all Windows scheduled tasks. This discovery needs powershell script in the agent host.</description>
                     <item_prototypes>
@@ -106,7 +135,7 @@
 Such triggers created with disabled state</description>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
+                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x800710E0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
                             <name>Scheduled task {#APPTASKS} ended with error</name>
                             <priority>AVERAGE</priority>
                             <description>Excluded status codes:&#13;
@@ -114,11 +143,22 @@ Such triggers created with disabled state</description>
 0x41300 - Ready&#13;
 0x41301 - Running&#13;
 0x41302 - Disabled&#13;
-0x41303 - The task has not yet run</description>
+0x41303 - The task has not yet run&#13;
+0x800710E0 - The operator or administrator has refused the request</description>
                         </trigger_prototype>
                     </trigger_prototypes>
                 </discovery_rule>
             </discovery_rules>
+            <macros>
+                <macro>
+                    <macro>{$SCHEDULED.TASK.MATCHES}</macro>
+                    <value>^.*$</value>
+                </macro>
+                <macro>
+                    <macro>{$SCHEDULED.TASK.NOT_MATCHES}</macro>
+                    <value>^$</value>
+                </macro>
+            </macros>
         </template>
     </templates>
     <value_maps>
@@ -184,6 +224,10 @@ Such triggers created with disabled state</description>
                 <mapping>
                     <value>0x800704DD</value>
                     <newvalue>The service is not available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x800710E0</value>
+                    <newvalue>The operator or administrator has refused the request</newvalue>
                 </mapping>
                 <mapping>
                     <value>0x8004130A</value>
@@ -306,16 +350,32 @@ Such triggers created with disabled state</description>
                     <newvalue>The task settings do not allow the task to start on demand</newvalue>
                 </mapping>
                 <mapping>
+                    <value>0x80070001</value>
+                    <newvalue>Incorrect function</newvalue>
+                </mapping>
+                <mapping>
                     <value>0x80070002</value>
                     <newvalue>One of the files is not available</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0x80070005</value>
+                    <newvalue>Access is denied</newvalue>
                 </mapping>
                 <mapping>
                     <value>0xA</value>
                     <newvalue>Environment incorrect</newvalue>
                 </mapping>
                 <mapping>
+                    <value>0xC0000017</value>
+                    <newvalue>No memory</newvalue>
+                </mapping>
+                <mapping>
                     <value>0xC000013A</value>
                     <newvalue>The application terminated</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0xC0020001</value>
+                    <newvalue>The string binding is invalid</newvalue>
                 </mapping>
                 <mapping>
                     <value>0xC06D007E</value>
