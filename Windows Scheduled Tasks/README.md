@@ -13,7 +13,7 @@ Use cases:
 - Detecting of disabling of a task
 - If you want to detect enabling of a task, add a trigger prototype for that
 
-Task are searched in the root. If you want, you can change search folder in the script
+Task are searched in the root of Task Scheduler folders. If you want, you can change search folder in the script
 
 ## Installation:
 
