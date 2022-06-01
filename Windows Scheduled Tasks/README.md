@@ -41,6 +41,9 @@ You can filter tasks by name:
  **{$SCHEDULED.TASK.NOT_MATCHES}** = ^$ (default value)<br>
 Apply one or both macros to host and filter needed/uneeded tasks by name
 
+For instance, if you want to watch all tasks, except the task with name "Test task" on host "Test-server", then apply macros **{$SCHEDULED.TASK.NOT_MATCHES}** = *Test task* to host *Test-server* in Zabbix GUI
+
+
 By default these tasks filtered out of the box (see filters inside the LLD):
 - User_Feed_Synchronization-{some-trash-ID}<br>
 - Adobe Acrobat Update Task
