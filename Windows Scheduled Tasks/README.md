@@ -32,6 +32,21 @@ For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Ser
 8. Enable or disable these items or triggers.
 9. Don't forget to make **action** as well for triggers with names "Scheduled task"
 
+### Filtering tasks
+
+You can filter tasks by name:
+- As said above, by enabling/disabling discovered items or triggers.<br>
+- Using macros with regexps:<br>
+ **{$SCHEDULED.TASK.MATCHES}** = ^.*$ (default value)<br>
+ **{$SCHEDULED.TASK.NOT_MATCHES}** = ^$ (default value)<br>
+Apply one or both macros to host and filter needed/uneeded tasks by name
+
+By default these tasks filtered out of the box (see filters inside the LLD):
+- User_Feed_Synchronization-{some-trash-ID}<br>
+- Adobe Acrobat Update Task
+
+Of course, this list is incomplete. Please, feel free to make an issue or pull request to append the list.
+
 
 ### Technical notes:
 
@@ -42,12 +57,14 @@ First one is a fork of the second one, but they have defferences in both ways. S
 
 Task Scheduler error codes:<br>
 https://docs.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-error-and-success-constants
+(some codes found elsewhere, but mostly they are there)
 
 Excluded task status codes:<br>
 0 - Success<br>
 0x41300 - Ready<br>
 0x41301 - Running<br>
 0x41302 - Disabled<br>
-0x41303 - The task has not yet run
+0x41303 - The task has not yet run<br>
+0x800710E0 - The operator or administrator has refused the request
 
 Triggers for detecting disabling tasks are discovering with Disabled initial state. Disable and/or Enable them as you need.
