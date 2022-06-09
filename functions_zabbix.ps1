@@ -430,6 +430,27 @@ function Check-ElevatedPermissions () {
 }
 
 
+function Get-WorkdayStatus ([Parameter(Position=0)][string]$Date) {
+    # Функция определения, рабочий ли день на определенную дату. Нужен интернет.
+    # https://isdayoff.ru/2022-04-23 - см. простенькое API https://www.isdayoff.ru/desc/
+    # Ответ | Значение        | Код возврата HTTP
+    # 0       Рабочий день         200
+    # 1       Нерабочий день    200
+    # 100     Ошибка в дате     400
+    # 101     Данные не найдены 404
+    
+    # сначала на всякий случай приведем дату к нормальному виду
+    $date = Get-Date $date -Format "yyyy-MM-hh"
+    $status = (Invoke-WebRequest "https://isdayoff.ru/$date").Content
+    if ($status) {
+        $status
+    } else {
+        # тут обработка ошибок, на случай, если закрыли сервис или же интернет
+        "-1"  # так себе обработка, ага :-)
+    }
+}
+
+
 function Translit-Text ([String]$String) {
     # This functions converts Russian symbols to ASCII
     # Many systems, including Zabbix, does not recognize non-ASCII characters
