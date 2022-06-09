@@ -1,8 +1,12 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-04-29T12:00:00Z</date>
+    <date>2022-06-09T16:00:00Z</date>
     <groups>
+        <group>
+            <name>MS SQL Servers</name>
+        </group>
     </groups>
     <templates>
         <template>
@@ -10,6 +14,9 @@
             <name>Template DB MSSQL</name>
             <description>Additional template for Microsoft SQL servers. Items, triggers, etc. Including backup events and errors.</description>
             <groups>
+                <group>
+                    <name>MS SQL Servers</name>
+                </group>
             </groups>
             <applications>
                 <application>
@@ -343,6 +350,30 @@ EventID 12289 - Job successfully finished</description>
                     </applications>
                 </item>
                 <item>
+                    <name>SQL: Blocked Processes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[BlockedProcesses.sql]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#3)}&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(#3)}&lt;1</recovery_expression>
+                            <name>MSSQL: Blocked processes more than 0</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <description>More at &#13;
+https://dba.stackexchange.com/questions/165143/how-to-get-the-sql-server-activity-monitors-output-using-t-sql&#13;
+and&#13;
+https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
                     <name>SQL: Blocks</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>sql.script[Blocks.sql]</key>
@@ -362,6 +393,56 @@ EventID 12289 - Job successfully finished</description>
                             <name>MS SQL</name>
                         </application>
                     </applications>
+                </item>
+                <item>
+                    <name>SQL: Head Blocker info</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[HeadBlocker.sql]</key>
+                    <description>String info about Head Blocker process&#13;
+&#13;
+It was not tested yet</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;&quot;&quot;</expression>
+                            <name>MSSQL: Head Blocker info</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <description>More at &#13;
+https://dba.stackexchange.com/questions/165143/how-to-get-the-sql-server-activity-monitors-output-using-t-sql&#13;
+and&#13;
+https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Head Blocker num</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[HeadBlockerNum.sql]</key>
+                    <description>it should be only one (or zero) but was not tested yet</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(#3)}&lt;1</recovery_expression>
+                            <name>MSSQL: Head Blocker num</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <description>More at &#13;
+https://dba.stackexchange.com/questions/165143/how-to-get-the-sql-server-activity-monitors-output-using-t-sql&#13;
+and&#13;
+https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</description>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>SQL: Low Memory</name>
