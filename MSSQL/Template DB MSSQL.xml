@@ -2,7 +2,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-06-09T16:00:00Z</date>
+    <date>2022-06-10T12:30:10Z</date>
     <groups>
         <group>
             <name>MS SQL Servers</name>
@@ -398,6 +398,8 @@ https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</de
                     <name>SQL: Head Blocker info</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>sql.script[HeadBlocker.sql]</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
                     <description>String info about Head Blocker process&#13;
 &#13;
 It was not tested yet</description>
