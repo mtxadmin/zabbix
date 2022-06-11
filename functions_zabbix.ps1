@@ -440,7 +440,7 @@ function Get-WorkdayStatus ([Parameter(Position=0)][string]$Date) {
     # 101     Данные не найдены 404
     
     # сначала на всякий случай приведем дату к нормальному виду
-    $date = Get-Date $date -Format "yyyy-MM-hh"
+    $date = Get-Date $date -Format "yyyy-MM-dd"
     $status = (Invoke-WebRequest "https://isdayoff.ru/$date").Content
     if ($status) {
         $status
