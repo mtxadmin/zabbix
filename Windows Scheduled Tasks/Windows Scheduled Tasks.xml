@@ -2,7 +2,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-06-01T15:50:00Z</date>
+    <date>2022-06-17T16:00:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -78,6 +78,12 @@
                             <valuemap>
                                 <name>Scheduled Task</name>
                             </valuemap>
+                            <preprocessing>
+                                <step>
+                                    <type>MATCHES_REGEX</type>
+                                    <params>^0x</params>
+                                </step>
+                            </preprocessing>
                         </item_prototype>
                         <item_prototype>
                             <name>Task: {#APPTASKS}: Last Run Time</name>
@@ -135,7 +141,7 @@
 Such triggers created with disabled state</description>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x800710E0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
+                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41306&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x800710E0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0xC0020001&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0xFFFFFFFF&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
                             <name>Scheduled task {#APPTASKS} ended with error</name>
                             <priority>AVERAGE</priority>
                             <description>Excluded status codes:&#13;
@@ -144,7 +150,10 @@ Such triggers created with disabled state</description>
 0x41301 - Running&#13;
 0x41302 - Disabled&#13;
 0x41303 - The task has not yet run&#13;
-0x800710E0 - The operator or administrator has refused the request</description>
+0x41306 - The task was terminated by user&#13;
+0x800710E0 - The operator or administrator has refused the request&#13;
+0xC0020001&#13;
+0xFFFFFFFF - Unhandled error</description>
                         </trigger_prototype>
                     </trigger_prototypes>
                 </discovery_rule>
@@ -380,6 +389,14 @@ Such triggers created with disabled state</description>
                 <mapping>
                     <value>0xC06D007E</value>
                     <newvalue>Unknown software exception</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0xFFFD0000</value>
+                    <newvalue>PowerShell script fails</newvalue>
+                </mapping>
+                <mapping>
+                    <value>0xFFFFFFFF</value>
+                    <newvalue>Unhandled error</newvalue>
                 </mapping>
                 <mapping>
                     <value>1</value>
