@@ -30,8 +30,17 @@ You can change the type of most of the items, they should work as passive type -
 In ms (milliseconds). 10000ms = 10 s
 
 - {$IIS_REQUEST_EXECUTION_TIME_US_HIGH} = 110000<br>
-In us (microseconds). 110000 ms = 110 s
+In us (microseconds). 110000 ms = 110 s (as far as I know, this is absolute maximum of wait time before timeout occurs)
+
+You can override these values freely - just set macros with such names for corresponding hosts in your infrastructure
 
 ### Technical notes
 
 There are no graphs because I use Grafana for visualization. But feel free to add some :-)
+
+#### And don't forget to make actions to receive alerts (template cannot make actions automatically, you have to make them by hands):
+... (some conditions) ...<br>
+Trigger name contains IIS:<br>
+OR
+Trigger name contains Eventlog: IIS<br>
+... (some conditions) ...
