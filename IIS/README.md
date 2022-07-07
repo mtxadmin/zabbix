@@ -22,7 +22,7 @@ You can change the type of most of the items, they should work as passive type -
 - IIS: W3SVC_W3WP\% 500 HTTP Response Sent
 - IIS: Current NonAnonymous Users
 
-- IIS restarting events  (+trigger)
+- IIS restarting events  (+trigger. The trigger has 5m recovery time)
 
 #### Macros:
 
