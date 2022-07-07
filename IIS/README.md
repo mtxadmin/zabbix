@@ -41,6 +41,6 @@ There are no graphs because I use Grafana for visualization. But feel free to ad
 #### And don't forget to make actions to receive alerts (template cannot make actions automatically, you have to make them by hands):
 ... (some conditions) ...<br>
 Trigger name contains IIS:<br>
-OR
+OR<br>
 Trigger name contains Eventlog: IIS<br>
 ... (some conditions) ...
