@@ -4,7 +4,7 @@ Format: zabbix 5.0 xml. It should also work on 5.2 and above (see [docs](https:/
 
 Apply the template to IIS servers hosts. It is compartible with standard "Template App IIS by Zabbix agent active". 
 
-You can change the type of most of the items, they should work as passive type - but not EventLog one
+You can change the type of most of the items, they should work as passive type - but not EventLog one (this is [by design](https://www.zabbix.com/documentation/2.0/en/manual/config/items/itemtypes/zabbix_agent/win_keys))
 
 ### Additions:
 
