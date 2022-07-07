@@ -64,6 +64,9 @@ You can override these values freely - just set macros with such names for corre
 
 On every queue, there are two dependent triggers, average and high respectively. Triggers are made with .min(#2) functions to exclude short narrow peaks. For thresholds, see the macros above
 
+### Notes
+
+All items configured as active checks. I you want, you can change most of them to passive type, but not Backpressure events (this is [by design](https://www.zabbix.com/documentation/2.0/en/manual/config/items/itemtypes/zabbix_agent/win_keys))
 
 #### And don't forget to make actions to receive alerts (template cannot make actions automatically, you have to make them by hands):
 ... (some conditions) ...<br>
