@@ -26,10 +26,10 @@ You can change the type of most of the items, they should work as passive type -
 
 #### Macros:
 
-{$IIS_REQUEST_EXECUTION_TIME_US_AVG} = 10000
+{$IIS_REQUEST_EXECUTION_TIME_US_AVG} = 10000<br>
 In ms (milliseconds). 10000ms = 10 s
 
-{$IIS_REQUEST_EXECUTION_TIME_US_HIGH} = 110000
+{$IIS_REQUEST_EXECUTION_TIME_US_HIGH} = 110000<br>
 In us (microseconds). 110000 ms = 110 s
 
 ### Technical notes
