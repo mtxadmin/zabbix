@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-07-07T10:00:00Z</date>
+    <groups>
+        <group>
+            <name>IIS Servers</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template App IIS by Zabbix agent active - custom</template>
+            <name>Template App IIS by Zabbix agent active - custom</name>
+            <groups>
+                <group>
+                    <name>IIS Servers</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>IIS</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Eventlog: IIS restart</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,&quot;w3wp.exe&quot;,&quot;Error|Critical&quot;,,1023,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <description>https://www.zabbix.com/documentation/5.0/en/manual/config/items/itemtypes/zabbix_agent/win_keys</description>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{str()}=1 and {nodata(5m)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>Eventlog: IIS restart</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>IIS: % Processor Time</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\Process(w3wp)\% Processor Time&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: RAM Private Bytes</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\Process(w3wp)\Private Bytes&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: RAM Working Set</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\Process(w3wp)\Working Set&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: .NET CLR Exceptions\# of Exceps Thrown / sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\.NET CLR Exceptions\\# of Exceps Thrown / sec&quot;]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: ASP.NET Applications\Requests/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\ASP.NET Applications(__Total__)\Requests/Sec&quot;]</key>
+                    <delay>5m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: ASP.NET\Request Execution Time (ms)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\ASP.NET\Request Execution Time&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;{$IIS_REQUEST_EXECUTION_TIME_US_HIGH}</expression>
+                            <name>IIS: Dropped connect (execution time more than timeout)</name>
+                            <opdata>Current value: {ITEM.LASTVALUE1} ms</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{last()}&gt;{$IIS_REQUEST_EXECUTION_TIME_US_AVG}</expression>
+                            <name>IIS: Request Execution time is high</name>
+                            <opdata>Current value: {ITEM.LASTVALUE1} ms</opdata>
+                            <priority>AVERAGE</priority>
+                            <dependencies>
+                                <dependency>
+                                    <name>IIS: Dropped connect (execution time more than timeout)</name>
+                                    <expression>{Template App IIS by Zabbix agent active - custom:perf_counter_en[&quot;\ASP.NET\Request Execution Time&quot;].last()}&gt;{$IIS_REQUEST_EXECUTION_TIME_US_HIGH}</expression>
+                                </dependency>
+                            </dependencies>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>IIS: ASP.NET\Requests Current</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\ASP.NET\Requests Current&quot;]</key>
+                    <delay>5m</delay>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: ASP.NET\Requests Queued</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\ASP.NET\Requests Queued&quot;]</key>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;15</expression>
+                            <name>IIS: ASP.NET Queued Requests more than 15</name>
+                            <opdata>Current value: {ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>IIS: W3SVC_W3WP\% 401 HTTP Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\W3SVC_W3WP(_Total)\% 401 HTTP Response Sent&quot;]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: W3SVC_W3WP\% 403 HTTP Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\W3SVC_W3WP(_Total)\% 403 HTTP Response Sent&quot;]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: W3SVC_W3WP\% 404 HTTP Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\W3SVC_W3WP(_Total)\% 404 HTTP Response Sent&quot;]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: W3SVC_W3WP\% 500 HTTP Response Sent</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\W3SVC_W3WP(_Total)\% 500 HTTP Response Sent&quot;]</key>
+                    <delay>10m</delay>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>IIS: Current NonAnonymous Users</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\Web Service(_Total)\Current NonAnonymous Users&quot;]</key>
+                    <delay>5m</delay>
+                    <applications>
+                        <application>
+                            <name>IIS</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <macros>
+                <macro>
+                    <macro>{$IIS_REQUEST_EXECUTION_TIME_US_AVG}</macro>
+                    <value>10000</value>
+                    <description>In ms (milliseconds). 10000ms = 10 s</description>
+                </macro>
+                <macro>
+                    <macro>{$IIS_REQUEST_EXECUTION_TIME_US_HIGH}</macro>
+                    <value>110000</value>
+                    <description>In us (microseconds). 110000 ms = 110 s</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+</zabbix_export>
