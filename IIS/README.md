@@ -2,7 +2,9 @@
 
 Format: zabbix 5.0 xml. It should also work on 5.2 and above (see [docs](https://www.zabbix.com/documentation/current/manual/xml_export_import/media) about template formats)
 
-Apply the template to IIS servers hosts. It is compartible with standard "Template App IIS by Zabbix agent active". Most of the items should work as passive type too - but not EventLog one
+Apply the template to IIS servers hosts. It is compartible with standard "Template App IIS by Zabbix agent active". 
+
+You can change the type of most of the items, they should work as passive type - but not EventLog one
 
 ### Additions:
 
