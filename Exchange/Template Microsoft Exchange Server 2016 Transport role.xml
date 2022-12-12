@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2021-08-09T08:12:48Z</date>
+    <date>2022-12-12T13:00:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -9,8 +9,8 @@
     </groups>
     <templates>
         <template>
-            <template>Template Microsoft Exchange Server 2016 Trasport role</template>
-            <name>Template Microsoft Exchange Server 2016 Trasport role</name>
+            <template>Template Microsoft Exchange Server 2016 Transport role</template>
+            <name>Template Microsoft Exchange Server 2016 Transport role</name>
             <description>Transport queues: &#13;
 https://www.activexperts.com/admin/exchange/transport-server/microsoft-exchange-transport-server-transport-queue-length/&#13;
 &#13;
@@ -24,6 +24,9 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
             </groups>
             <applications>
                 <application>
+                    <name>Exchange Back Pressure</name>
+                </application>
+                <application>
                     <name>Exchange Transport</name>
                 </application>
             </applications>
@@ -31,18 +34,38 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                 <item>
                     <name>Back pressure events</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15004|15005),,skip]</key>
+                    <key>eventlog[Application,,,MSExchangeTransport,&quot;(15004|15005)&quot;,,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
                     <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Back Pressure</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(,5m)}&lt;&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(5m)}=1</recovery_expression>
+                            <name>Exchange back pressure level</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Back pressure level</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15004|15005|10000000),,skip]</key>
+                    <key>eventlog[Application,,,MSExchangeTransport,(15004|15005|10000000),,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
                     <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Back Pressure</name>
+                        </application>
+                    </applications>
                     <preprocessing>
                         <step>
                             <type>REGEX</type>
@@ -52,12 +75,112 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                     </preprocessing>
                 </item>
                 <item>
-                    <name>Back pressure events critical</name>
+                    <name>Back pressure events critical: Diskspace</name>
                     <type>ZABBIX_ACTIVE</type>
-                    <key>eventlog[Application,Resource pressure,,MSExchangeTransport,(15006|15007),,skip]</key>
+                    <key>eventlog[Application,,,MSExchangeTransport,15006,,skip]</key>
                     <trends>0</trends>
                     <value_type>LOG</value_type>
                     <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Back Pressure</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0 and {nodata(15m)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(15m)}=1</recovery_expression>
+                            <name>Exchange back pressure critical: Diskspace</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Back pressure events critical: Memory</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,,MSExchangeTransport,15007,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <description>See https://docs.microsoft.com/en-us/Exchange/mail-flow/back-pressure</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Back Pressure</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&lt;&gt;0 and {nodata(15m)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(15m)}=1</recovery_expression>
+                            <name>Exchange back pressure critical: Memory</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Copy Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchange Replication(_total)\CopyQueueLength&quot;]</key>
+                    <units>Message(s)</units>
+                    <description>DB replication queues</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                            <name>Copy Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                            <name>Copy Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Replay Queue Length</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter[&quot;\MSExchange Replication(_total)\ReplayQueueLength&quot;]</key>
+                    <units>Message(s)</units>
+                    <description>DB replication queues</description>
+                    <applications>
+                        <application>
+                            <name>Exchange Transport</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                            <name>Replay Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                        <trigger>
+                            <expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                            <name>Replay Queue Length</name>
+                            <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <name>Active Mailbox Delivery Queue Length</name>
@@ -84,8 +207,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Active Mailbox Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Mailbox Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Mailbox Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Mailbox Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Mailbox Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -124,8 +247,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Active Non-Smtp Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Non-Smtp Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Non-Smtp Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Non-Smtp Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Non-Smtp Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -162,8 +285,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Active Remote Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Active Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -191,17 +314,17 @@ Is in Exchange 2016 performance counters</description>
                     </applications>
                     <triggers>
                         <trigger>
-                            <expression>{max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
+                            <expression>{min(#2)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>{min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                            <recovery_expression>{max(15m)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                             <name>Aggregate Delivery Queue Length (All Queues)</name>
                             <opdata>Queue length: {ITEM.LASTVALUE}</opdata>
                             <priority>AVERAGE</priority>
                             <dependencies>
                                 <dependency>
                                     <name>Aggregate Delivery Queue Length (All Queues)</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Delivery Queue Length (All Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Delivery Queue Length (All Queues)&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Delivery Queue Length (All Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Delivery Queue Length (All Queues)&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -238,8 +361,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Aggregate Shadow Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Shadow Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Shadow Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Shadow Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Aggregate Shadow Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -276,8 +399,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Delay Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Delay Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Delay Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Delay Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Delay Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -314,8 +437,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>External Active Remote Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Active Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Active Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -352,8 +475,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>External Aggregate Delivery Queue Length (All External Queues)</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Aggregate Delivery Queue Length (All External Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Aggregate Delivery Queue Length (All External Queues)&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Aggregate Delivery Queue Length (All External Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Aggregate Delivery Queue Length (All External Queues)&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -390,8 +513,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>External Largest Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -427,8 +550,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>External Largest Unlocked Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Unlocked Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Unlocked Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Unlocked Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Largest Unlocked Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -465,8 +588,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>External Retry Remote Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Retry Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\External Retry Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -503,8 +626,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Internal Active Remote Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Active Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Active Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Active Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -541,8 +664,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Internal Aggregate Delivery Queue Length (All Internal Queues)</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Aggregate Delivery Queue Length (All Internal Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Aggregate Delivery Queue Length (All Internal Queues)&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Aggregate Delivery Queue Length (All Internal Queues)&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Aggregate Delivery Queue Length (All Internal Queues)&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -579,8 +702,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Internal Largest Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -617,8 +740,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Internal Largest Unlocked Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Unlocked Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Unlocked Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Unlocked Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Largest Unlocked Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -655,8 +778,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Internal Retry Remote Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Retry Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Internal Retry Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -786,8 +909,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Largest Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Largest Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Largest Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Largest Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -1012,8 +1135,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Poison Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Poison Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Poison Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Poison Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Poison Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -1052,8 +1175,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Retry Mailbox Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Mailbox Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Mailbox Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Mailbox Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Mailbox Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -1092,8 +1215,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Retry Non-Smtp Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Non-Smtp Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Non-Smtp Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Non-Smtp Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Non-Smtp Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -1130,8 +1253,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Retry Remote Delivery Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Remote Delivery Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Retry Remote Delivery Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -1230,8 +1353,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Submission Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Submission Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
@@ -1336,8 +1459,8 @@ Is in Exchange 2016 performance counters</description>
                             <dependencies>
                                 <dependency>
                                     <name>Unreachable Queue Length</name>
-                                    <expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Unreachable Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
-                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Trasport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Unreachable Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
+                                    <expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Unreachable Queue Length&quot;].min(#2)}&gt;{$EXCHANGE_TRANSPORT_QUEUES_HIGH}</expression>
+                                    <recovery_expression>{Template Microsoft Exchange Server 2016 Transport role:perf_counter[&quot;\MSExchangeTransport Queues(_total)\Unreachable Queue Length&quot;].max(15m)}&lt;{$EXCHANGE_TRANSPORT_QUEUES_AVG}</recovery_expression>
                                 </dependency>
                             </dependencies>
                         </trigger>
