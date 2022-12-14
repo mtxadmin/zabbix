@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-12-12T13:00:00Z</date>
+    <date>2022-12-14T12:00:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -24,6 +24,9 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
             </groups>
             <applications>
                 <application>
+                    <name>Eventlog</name>
+                </application>
+                <application>
                     <name>Exchange Back Pressure</name>
                 </application>
                 <application>
@@ -31,6 +34,29 @@ Tested on Exchange 2016. See https://github.com/mtxadmin/zabbix/tree/main/Exchan
                 </application>
             </applications>
             <items>
+                <item>
+                    <name>EventID 3: WebHost failed to process a request</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>eventlog[Application,,,,3,,skip]</key>
+                    <trends>0</trends>
+                    <value_type>LOG</value_type>
+                    <applications>
+                        <application>
+                            <name>Eventlog</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{regexp(WebHost)}=1 and {nodata(15m)}=0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{nodata(15m)}=1</recovery_expression>
+                            <name>EventID 3: WebHost failed to process a request</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
                 <item>
                     <name>Back pressure events</name>
                     <type>ZABBIX_ACTIVE</type>
