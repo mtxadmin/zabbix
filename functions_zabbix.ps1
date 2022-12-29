@@ -244,6 +244,8 @@ function Zabbix-AddOrSendKey ([String]$HostName,[String]$ItemName,[String]$ItemK
     Write-Host "Item key: "  -ForegroundColor Green -NoNewline; Write-Host $ItemKey
     Write-Host ("Value: " + $ItemValue)
 
+    $ItemValue = $ItemValue -replace "`n.*" -replace "`".*"  # multiline error cannot be sent
+
     switch ($Mode) {
         "Setup" {
             $hostid = Zabbix-GetHostIdByName -HostName $HostName -Token $Token
@@ -254,10 +256,52 @@ function Zabbix-AddOrSendKey ([String]$HostName,[String]$ItemName,[String]$ItemK
         "Scheduler" {
             # Keys should be added to zabbix already by setup mode.
             $zabbix_proxy = Zabbix-GetProxyByHostname -Hostname $HostName
-            C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $HostName -k $ItemKey -o $ItemValue
+            if ($zabbix_proxy -and $HostName -and $ItemKey -and $ItemValue) {
+                C:\zabbix\bin\zabbix_sender.exe -z $zabbix_proxy -s $HostName -k $ItemKey -o $ItemValue
+            } else {
+                Write-Host "Empty data. `$zabbix_proxy=$zabbix_proxy `$HostName=$HostName `$ItemKey=$ItemKey `$ItemValue=$ItemValue"
+            }
             break
         }
     }
+}
+
+
+function Zabbix-GetIPsbyHostname ([String]$Hostname,[String]$Token) {
+    # Retrieving host IP by host name
+    # https://www.zabbix.com/documentation/current/manual/api/reference/hostinterface/get
+    # There may be several interfaces and several IPs
+
+
+    # 1. Getting hostid by hostname
+    $hostid = Zabbix-GetHostIdByName -HostName $Hostname -Token $Token
+
+
+    # 2. Getting host interface by hostid
+$post_params = @"
+{
+    "jsonrpc": "2.0",
+    "method": "hostinterface.get",
+    "params": {
+        "output": "extend",
+        "hostids": "$hostid"
+    },
+    "auth": "$Token",
+    "id": 1
+}
+"@
+
+    $answer = Invoke-WebRequest -Uri "$zabbix_server_url/api_jsonrpc.php" -Method POST -Body $post_params -ContentType "application/json-rpc" -UseBasicParsing
+    if ((ConvertFrom-Json $answer).result) {
+        $host_ip = (ConvertFrom-Json $answer).result.ip
+        # There may be several interfaces and several IPs
+        return $host_ip
+    } else {
+        Write-Host -ForegroundColor Yellow (ConvertFrom-Json $answer).error.message
+        Write-Host -ForegroundColor Yellow (ConvertFrom-Json $answer).error.data
+        return $false
+    }
+
 }
 
 
@@ -298,6 +342,8 @@ function Zabbix-CreateTrigger([String]$Description,[String]$Expression,[int]$Pri
     # Todo: return trigger id - for dependencies
     # Todo: make dependencies mechanism. It seems in my test it was way too overcomplex. 
     # ConvertTo-Json -AsArray can transform data to zabbix API format, but it exists only in PS 7.0
+
+    # Description here is in fact a trigger name. But this term is from Zabbix API docs.
 
     # But for checking we need hostname. Ok.
     $host_name = $Expression -replace "^{" -replace ":.*"
@@ -438,7 +484,7 @@ function Get-WorkdayStatus ([Parameter(Position=0)][string]$Date) {
     # 1       Нерабочий день    200
     # 100     Ошибка в дате     400
     # 101     Данные не найдены 404
-    
+
     # сначала на всякий случай приведем дату к нормальному виду
     $date = Get-Date $date -Format "yyyy-MM-dd"
     $status = (Invoke-WebRequest "https://isdayoff.ru/$date").Content
