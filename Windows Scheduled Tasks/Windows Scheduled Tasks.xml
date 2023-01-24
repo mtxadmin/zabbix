@@ -1,8 +1,7 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-06-17T16:00:00Z</date>
+    <date>2023-01-24T10:00:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -30,31 +29,36 @@
                     <key>TaskSchedulerMonitoring[DiscoverCustomTasks]</key>
                     <delay>60</delay>
                     <filter>
-                        <evaltype>FORMULA</evaltype>
-                        <formula>A and B and C and D</formula>
+                        <evaltype>AND</evaltype>
                         <conditions>
                             <condition>
                                 <macro>{#APPTASKS}</macro>
                                 <value>User_Feed_Synchronization-</value>
                                 <operator>NOT_MATCHES_REGEX</operator>
-                                <formulaid>C</formulaid>
+                                <formulaid>A</formulaid>
                             </condition>
                             <condition>
                                 <macro>{#APPTASKS}</macro>
                                 <value>{$SCHEDULED.TASK.MATCHES}</value>
-                                <formulaid>A</formulaid>
+                                <formulaid>B</formulaid>
                             </condition>
                             <condition>
                                 <macro>{#APPTASKS}</macro>
                                 <value>{$SCHEDULED.TASK.NOT_MATCHES}</value>
                                 <operator>NOT_MATCHES_REGEX</operator>
-                                <formulaid>B</formulaid>
+                                <formulaid>C</formulaid>
                             </condition>
                             <condition>
                                 <macro>{#APPTASKS}</macro>
                                 <value>Adobe Acrobat Update Task</value>
                                 <operator>NOT_MATCHES_REGEX</operator>
                                 <formulaid>D</formulaid>
+                            </condition>
+                            <condition>
+                                <macro>{#APPTASKS}</macro>
+                                <value>Optimize Start Menu</value>
+                                <operator>NOT_MATCHES_REGEX</operator>
+                                <formulaid>E</formulaid>
                             </condition>
                         </conditions>
                     </filter>
@@ -81,7 +85,7 @@
                             <preprocessing>
                                 <step>
                                     <type>MATCHES_REGEX</type>
-                                    <params>^0x</params>
+                                    <params>^(0x|[0-9]+$)</params>
                                 </step>
                             </preprocessing>
                         </item_prototype>
