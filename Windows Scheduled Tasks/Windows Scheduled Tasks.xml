@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2023-01-24T10:00:00Z</date>
+    <date>2023-06-05T07:40:00Z</date>
     <groups>
         <group>
             <name>Templates</name>
@@ -145,7 +145,8 @@
 Such triggers created with disabled state</description>
                         </trigger_prototype>
                         <trigger_prototype>
-                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41306&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x800710E0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0xC0020001&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0xFFFFFFFF&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
+                            <expression>{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x103&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41300&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41301&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41302&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41303&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x41306&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x800710E0&quot; and&#13;
+{Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0x8004131F&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0xC0020001&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskLastResult,{#APPTASKS}].last()}&lt;&gt;&quot;0xFFFFFFFF&quot; and {Template Windows Scheduled Tasks:TaskSchedulerMonitoring[TaskState,{#APPTASKS}].last()}&lt;&gt;&quot;Disabled&quot;</expression>
                             <name>Scheduled task {#APPTASKS} ended with error</name>
                             <priority>AVERAGE</priority>
                             <description>Excluded status codes:&#13;
