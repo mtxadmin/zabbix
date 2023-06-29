@@ -331,7 +331,7 @@
                 </macro>
                 <macro>
                     <macro>{$SERVICE.NAME.NOT_MATCHES_2}</macro>
-                    <value>^(.+(HPZ12|TELEMETRY)|(clr_optimiz|IntelAudio|YandexBrowser|OneSync|CDPUser|Wpn|igfxCUI|tiledata|Adobe|PowerBIReport|KL Deployment Wrapper).+)$</value>
+                    <value>^(.+(HPZ12|TELEMETRY)|(clr_optimiz|IntelAudio|YandexBrowser|OneSync|CDPUser|Wpn|igfxCUI|tiledata|Adobe|PowerBIReport|KL Deployment Wrapper|KUMAWindowsAgent|WpnUserService).+)$</value>
                     <description>Services with random parts in the names</description>
                 </macro>
                 <macro>
