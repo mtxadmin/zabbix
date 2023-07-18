@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2023-07-18T12:00:00Z</date>
+    <groups>
+        <group>
+            <name>Templates</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Client-banks</template>
+            <name>Template Client-banks</name>
+            <description>Template for monitor Russian Client-banks entrypoints. See https://github.com/mtxadmin/zabbix/tree/main/Online/Banks for details</description>
+            <groups>
+                <group>
+                    <name>Templates</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>TCP</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>Client-banks - PSB port (corporate.psbank.ru:443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[corporate.psbank.ru,443]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: PSB port unavailable (corporate.psbank.ru:443)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - PSB port (corporate.psbank.ru:9443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[corporate.psbank.ru,9443]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: PSB port unavailable (corporate.psbank.ru:9443)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - GPB port (cs.gazprombank.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[cs.gazprombank.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: GPB port unavailable (cs.gazprombank.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank port (extpki.sigma.sbrf.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[extpki.sigma.sbrf.ru,80]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank port (fintech.sberbank.ru:9443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[fintech.sberbank.ru,9443]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: Sberbank port unavailable (fintech.sberbank.ru:9443)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - VTB port (gost.h2h.vtbbo.ru:8443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[gost.h2h.vtbbo.ru,8443]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: VTB port unavailable (gost.h2h.vtbbo.ru:8443)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - GPB port (h2h.gazprombank.ru:443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[h2h.gazprombank.ru,443]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: GPB port unavailable (h2h.gazprombank.ru:443)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank port (intpki.ca.sbrf.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[intpki.ca.sbrf.ru,80]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank port (pki.sberbank.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[pki.sberbank.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: Sberbank port unavailable (pki.sberbank.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - VTB port (pki.vtb.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[pki.vtb.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: VTB port unavailable (pki.vtb.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - PSB port (psbank.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[psbank.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: PSB port unavailable (psbank.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank port (sbi.sberbank.ru:9443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[sbi.sberbank.ru,9443]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: Sberbank port unavailable (sbi.sberbank.ru:9443)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - VTB port (vtbldap.vtb.ru:389)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.port[vtbldap.vtb.ru,389]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - GPB service (cs.gazprombank.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[http,cs.gazprombank.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: GPB service unavailable (cs.gazprombank.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank service (extpki.sigma.sbrf.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[http,extpki.sigma.sbrf.ru,80]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank service (intpki.ca.sbrf.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[http,intpki.ca.sbrf.ru,80]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank service (pki.sberbank.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[http,pki.sberbank.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: Sberbank service unavailable (pki.sberbank.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - VTB service (pki.vtb.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[http,pki.vtb.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: VTB service unavailable (pki.vtb.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - PSB service (psbank.ru:80)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[http,psbank.ru,80]</key>
+                    <delay>10s</delay>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{max(#3)}&lt;1</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{min(#5)}&gt;0</recovery_expression>
+                            <name>Client-bank: PSB service unavailable (psbank.ru:80)</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Client-banks - PSB service (corporate.psbank.ru:443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[https,corporate.psbank.ru,443]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - PSB service (corporate.psbank.ru:9443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[https,corporate.psbank.ru,9443]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank service (fintech.sberbank.ru:9443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[https,fintech.sberbank.ru,9443]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - VTB service (gost.h2h.vtbbo.ru:8443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[https,gost.h2h.vtbbo.ru,8443]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - GPB service (h2h.gazprombank.ru:443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[https,h2h.gazprombank.ru,443]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - Sberbank service (sbi.sberbank.ru:9443)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[https,sbi.sberbank.ru,9443]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Client-banks - VTB service (vtbldap.vtb.ru:389)</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>net.tcp.service[ldap,vtbldap.vtb.ru,389]</key>
+                    <delay>10s</delay>
+                    <status>DISABLED</status>
+                    <applications>
+                        <application>
+                            <name>TCP</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>
