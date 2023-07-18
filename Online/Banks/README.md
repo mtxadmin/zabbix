@@ -35,3 +35,5 @@ In this template active items are used, but you can change their type if needed.
 ## Installation
 
 Just import the template and apply to needed hosts.
+
+Don't forget to create Actions. 
