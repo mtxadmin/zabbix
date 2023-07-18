@@ -2,9 +2,20 @@ Template to monitor several Russian banks' entrypoints for [online banking](http
 
 Monitored banks:
 - [Sberbank](https://en.wikipedia.org/wiki/Sberbank)
+  - fintech.sberbank.ru:9443
+  - pki.sberbank.ru:80
+  - sbi.sberbank.ru:9443
 - [GazPromBank](https://en.wikipedia.org/wiki/Gazprombank) (GPB)
+  - cs.gazprombank.ru:80
+  - h2h.gazprombank.ru:443
 - [VneshTorgBank](https://en.wikipedia.org/wiki/VTB_Bank) (VTB)
+  - gost.h2h.vtbbo.ru:8443
+  - pki.vtb.ru:80
 - [PromSvyazBank](https://en.wikipedia.org/wiki/Promsvyazbank) (PSB)
+  - corporate.psbank.ru:443
+  - corporate.psbank.ru:9443
+  - psbank.ru:80
+
 
 Monitored points:
 - Ports<br>
