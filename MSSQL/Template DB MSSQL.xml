@@ -1,8 +1,7 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2022-06-10T12:30:10Z</date>
+    <date>2023-08-09T16:00:00Z</date>
     <groups>
         <group>
             <name>MS SQL Servers</name>
@@ -331,7 +330,6 @@ EventID 12289 - Job successfully finished</description>
                     <name>SQL: Service State - SQL Server</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>service_state[MSSQLSERVER]</key>
-                    <delay>10m</delay>
                     <applications>
                         <application>
                             <name>MS SQL</name>
@@ -342,7 +340,6 @@ EventID 12289 - Job successfully finished</description>
                     <name>SQL: Service State - SQL Agent</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>service_state[SQLServerAgent]</key>
-                    <delay>10m</delay>
                     <applications>
                         <application>
                             <name>MS SQL</name>
@@ -408,6 +405,16 @@ It was not tested yet</description>
                             <name>MS SQL</name>
                         </application>
                     </applications>
+                    <preprocessing>
+                        <step>
+                            <type>NOT_MATCHES_REGEX</type>
+                            <params>/^$/</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
                     <triggers>
                         <trigger>
                             <expression>{last()}&lt;&gt;&quot;&quot;</expression>
@@ -422,10 +429,11 @@ https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</de
                     </triggers>
                 </item>
                 <item>
-                    <name>SQL: Head Blocker num</name>
+                    <name>SQL: HeadBlocker num</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>sql.script[HeadBlockerNum.sql]</key>
-                    <description>it should be only one (or zero) but was not tested yet</description>
+                    <status>DISABLED</status>
+                    <description>it should be head blocker num, but in fact it shows ordinary blocks.</description>
                     <applications>
                         <application>
                             <name>MS SQL</name>
@@ -438,6 +446,7 @@ https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</de
                             <recovery_expression>{max(#3)}&lt;1</recovery_expression>
                             <name>MSSQL: Head Blocker num</name>
                             <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <status>DISABLED</status>
                             <priority>HIGH</priority>
                             <description>More at &#13;
 https://dba.stackexchange.com/questions/165143/how-to-get-the-sql-server-activity-monitors-output-using-t-sql&#13;
@@ -445,6 +454,93 @@ and&#13;
 https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</description>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <name>SQL: HeadBlocker4 num</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[HeadBlockerNum_4.sql]</key>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{last()}&gt;0</expression>
+                            <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
+                            <recovery_expression>{max(#3)}&lt;1</recovery_expression>
+                            <name>MSSQL: Head Blocker num v4</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                            <description>More at &#13;
+https://dba.stackexchange.com/questions/165143/how-to-get-the-sql-server-activity-monitors-output-using-t-sql&#13;
+and&#13;
+https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</description>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SQL: Head Blocker_2 info</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[HeadBlocker_2.sql]</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>String info about Head Blocker process&#13;
+&#13;
+It was not tested yet</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>NOT_MATCHES_REGEX</type>
+                            <params>/^$/</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>SQL: Head Blocker_4 info</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[HeadBlocker_4.sql]</key>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <description>String info about Head Blocker process&#13;
+&#13;
+It was not tested yet</description>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
+                    <preprocessing>
+                        <step>
+                            <type>NOT_MATCHES_REGEX</type>
+                            <params>/^$/</params>
+                        </step>
+                        <step>
+                            <type>DISCARD_UNCHANGED</type>
+                            <params/>
+                        </step>
+                    </preprocessing>
+                </item>
+                <item>
+                    <name>SQL Logins</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>sql.script[Logins.sql]</key>
+                    <delay>1h</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS SQL</name>
+                        </application>
+                    </applications>
                 </item>
                 <item>
                     <name>SQL: Low Memory</name>
@@ -551,7 +647,47 @@ https://stackoverflow.com/questions/37296185/sql-query-to-list-head-blockers</de
                         </trigger>
                     </triggers>
                 </item>
+                <item>
+                    <name>SQL Logins json</name>
+                    <type>DEPENDENT</type>
+                    <key>sql_logins_json</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>CSV_TO_JSON</type>
+                            <params> 
+
+0</params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>sql.script[Logins.sql]</key>
+                    </master_item>
+                </item>
             </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>SQL Logins</name>
+                    <type>DEPENDENT</type>
+                    <key>sql_logins_discovery</key>
+                    <delay>0</delay>
+                    <master_item>
+                        <key>sql_logins_json</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#NAME}</lld_macro>
+                            <path>$.2</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#SERVER}</lld_macro>
+                            <path>$.1</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
             <macros>
                 <macro>
                     <macro>{$MEMORY.UTIL.MAX}</macro>
