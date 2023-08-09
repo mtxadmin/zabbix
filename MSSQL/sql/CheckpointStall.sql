@@ -1,6 +1,6 @@
 USE master
 GO
---мониторит перегрузку дисковой подсистемы через подвисание checkpoint process
+--РјРѕРЅРёС‚РѕСЂРёС‚ РїРµСЂРµРіСЂСѓР·РєСѓ РґРёСЃРєРѕРІРѕР№ РїРѕРґСЃРёСЃС‚РµРјС‹ С‡РµСЂРµР· РїРѕРґРІРёСЃР°РЅРёРµ checkpoint process
 declare @pastMinutes int = 20;
 declare @ErrorLog as table( [LogDate] datetime null, [ProcessInfo] nvarchar(20) null, [Text] nvarchar(MAX) null) ;
 -- Command will insert the errorlog data into temporary table
