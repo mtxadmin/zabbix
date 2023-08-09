@@ -23,7 +23,7 @@ For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Ser
    Timeout=20<br>
 7. Restart Zabbix agent service on this server
 8. In Zabbix web interface, apply the imported template **Template DB MSSQL** to the host
-9. Don't forget to add actions for trigger names "SQL:" and "SQL Login"
+9. Don't forget to add actions for trigger names that contain "SQL:" and "SQL Login"
 
 ### Technical notes:
 
