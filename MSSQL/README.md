@@ -14,15 +14,16 @@ Most SQL scripts and some parameters are found on various MSSQL-oriented forums.
 2. Go to MS SQL server console (RDP, typically)
 3. Make **sql** subfolder in Zabbix agent folder on needed server - not Zabbix server, but MSSQL monitored server, every. For instance, c:\zabbix\sql\
 4. Copy all *.sql scripts to that **sql** subfolder
-5. Copy pslaunch.cmd and run_sql_script.ps1 files to Zabbix agent folder (c:\zabbix\ )
+5. Copy run_sql_script.ps1 file to Zabbix agent folder (c:\zabbix\ )
 6. Edit zabbix_agentd.conf :
 -  find **Server:** string and add there **,127.0.0.1,::1** to the end of line.<br>
 For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Server=10.0.0.100,10.0.0.101,127.0.0.1,::1**
 -  add parameters to the end of file:<br>
-   UserParameter=sql.script[*],"c:\zabbix\pslaunch.cmd" "C:\zabbix\run_sql_script.ps1" -script $1 -prm $2<br>
+   UserParameter=sql.script[*], powershell -NoProfile -ExecutionPolicy Bypass -File  $1 -prm $2<br>
    Timeout=20<br>
 7. Restart Zabbix agent service on this server
 8. In Zabbix web interface, apply the imported template **Template DB MSSQL** to the host
+9. Don't forget to add actions for trigger names "SQL:" and "SQL Login"
 
 ### Technical notes:
 
