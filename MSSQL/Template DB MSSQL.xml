@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2023-08-09T16:00:00Z</date>
+    <date>2023-08-10T09:20:30Z</date>
     <groups>
         <group>
             <name>MS SQL Servers</name>
@@ -654,6 +654,7 @@ It was not tested yet</description>
                     <delay>0</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
+                    <description>JSON output is converted to a separate item before discovery, just for debug</description>
                     <preprocessing>
                         <step>
                             <type>CSV_TO_JSON</type>
@@ -673,6 +674,218 @@ It was not tested yet</description>
                     <type>DEPENDENT</type>
                     <key>sql_logins_discovery</key>
                     <delay>0</delay>
+                    <description>Logins.sql resulting columns:&#13;
+ServerName,&#13;
+LoginName,&#13;
+DaysUntilExpiration (zero),&#13;
+IsExpired,&#13;
+IsLocked,&#13;
+IsMustChange,&#13;
+is_expiration_checked,&#13;
+is_policy_checked,&#13;
+LockoutTime (1900-01-01),&#13;
+DefaultDatabase (master),&#13;
+DefaultLanguage (us_english),&#13;
+PasswordLastSetTime,&#13;
+BadPasswordCount,&#13;
+BadPasswordTime</description>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>SQL Login {#NAME} BadPasswordCount</name>
+                            <type>DEPENDENT</type>
+                            <key>sql_login_badpasswordcount[{#NAME}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>MS SQL</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.2=='{#NAME}')].13</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>sql_logins_json</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{diff()}=1</expression>
+                                    <name>SQL Login {#NAME} - BadPasswordCount has been increased</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SQL Login {#NAME} DaysUntilExpiration</name>
+                            <type>DEPENDENT</type>
+                            <key>sql_login_daysuntilexpiration[{#NAME}]</key>
+                            <delay>0</delay>
+                            <description>https://learn.microsoft.com/en-us/sql/t-sql/functions/loginproperty-transact-sql :&#13;
+* 0 if the login is expired or if it will expire on the day when queried.&#13;
+* -1 if the local security policy in Windows never expires the password.&#13;
+* NULL if the CHECK_POLICY or CHECK_EXPIRATION is OFF for a login, or if the operating system does not support the password policy.&#13;
+&#13;
+Logically, NULL and -1 are excluded by the query before, so it's always 0. Such a great parameter :-)</description>
+                            <applications>
+                                <application>
+                                    <name>MS SQL</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.2=='{#NAME}')].3</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>sql_logins_json</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SQL Login {#NAME} IsExpired</name>
+                            <type>DEPENDENT</type>
+                            <key>sql_login_isexpired[{#NAME}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>MS SQL</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.2=='{#NAME}')].4</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>sql_logins_json</key>
+                            </master_item>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}=1</expression>
+                                    <name>SQL Login {#NAME} is expired</name>
+                                    <priority>AVERAGE</priority>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SQL Login {#NAME} IsLocked</name>
+                            <type>DEPENDENT</type>
+                            <key>sql_login_islocked[{#NAME}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>MS SQL</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.2=='{#NAME}')].5</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>sql_logins_json</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>SQL Login {#NAME} IsMustChange</name>
+                            <type>DEPENDENT</type>
+                            <key>sql_login_ismustchange[{#NAME}]</key>
+                            <delay>0</delay>
+                            <applications>
+                                <application>
+                                    <name>MS SQL</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.2=='{#NAME}')].6</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>sql_logins_json</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
                     <master_item>
                         <key>sql_logins_json</key>
                     </master_item>
