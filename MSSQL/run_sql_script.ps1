@@ -1,6 +1,6 @@
-param( [string]$scriptpath )
+param( [string]$ScriptName, [string]$Prm )
 $prm = $args[3]
-if ($scriptpath -and $scriptpath.Length -gt 0) {
+if ($ScriptName -and $ScriptName.Length -gt 0) {
     $scriptpath = "C:\zabbix\sql\$scriptpath"
     $nc         = "C:\zabbix\sql\setnocount.sql"
     if (Test-Path $scriptpath) {
