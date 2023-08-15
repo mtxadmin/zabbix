@@ -19,7 +19,7 @@ Most SQL scripts and some parameters are found on various MSSQL-oriented forums.
 -  find **Server:** string and add there **,127.0.0.1,::1** to the end of line.<br>
 For instance, if there was **Server=10.0.0.100,10.0.0.101** , it should be **Server=10.0.0.100,10.0.0.101,127.0.0.1,::1**
 -  add parameters to the end of file:<br>
-   UserParameter=sql.script[*], powershell -NoProfile -ExecutionPolicy Bypass -File  $1 -prm $2<br>
+   UserParameter=sql.script[*], powershell -NoProfile -ExecutionPolicy Bypass -File "C:\zabbix\run_sql_script.ps1" -ScriptName $1 -Prm $2<br>
    Timeout=20<br>
 7. Restart Zabbix agent service on this server
 8. Grant additional access to Zabbix user. In MS SQL Management Studio:
