@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>5.0</version>
-    <date>2023-08-10T09:20:30Z</date>
+    <date>2023-08-16T16:00:20Z</date>
     <groups>
         <group>
             <name>MS SQL Servers</name>
@@ -533,7 +533,7 @@ It was not tested yet</description>
                     <name>SQL Logins</name>
                     <type>ZABBIX_ACTIVE</type>
                     <key>sql.script[Logins.sql]</key>
-                    <delay>1h</delay>
+                    <delay>5m</delay>
                     <trends>0</trends>
                     <value_type>TEXT</value_type>
                     <applications>
@@ -674,6 +674,7 @@ It was not tested yet</description>
                     <type>DEPENDENT</type>
                     <key>sql_logins_discovery</key>
                     <delay>0</delay>
+                    <lifetime>1h</lifetime>
                     <description>Logins.sql resulting columns:&#13;
 ServerName,&#13;
 LoginName,&#13;
