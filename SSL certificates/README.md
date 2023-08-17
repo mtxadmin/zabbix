@@ -9,7 +9,7 @@ This solution based on Microsoft Powershell which embedded in Windows.
 
 ## History
 
-There are a bunch of similar solutions for Zabbix, but they are all for Linux environment. This one based on Windows.
+There are a bunch of similar solutions for Zabbix, but they are all for Linux environment. This one is based on Windows.
 
 And now on 6.0 Zabbix can monitor certificates natively. Though, I didn't test that.
 
