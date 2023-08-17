@@ -7,6 +7,13 @@ Script lists all urls from text file, and automatically makes all items on Zabbi
 This solution based on Microsoft Powershell which embedded in Windows.
 
 
+## History
+
+There are a bunch of similar solutions for Zabbix, but they are all for Linux environment. This one based on Windows.
+
+And now on 6.0 Zabbix can monitor certificates natively. Though, I didn't test that.
+
+
 ## Installation:
 
 1. Copy files check_ssl_certs.ps1, check_ssl_certs_urls_list.txt, functions_zabbix.ps1 to any folder on any server (its host must be exist in zabbix). And don't forget functions_zabbix.ps1
