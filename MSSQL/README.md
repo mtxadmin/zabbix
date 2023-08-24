@@ -1,6 +1,6 @@
 # Microsoft SQL Server
 
-Zabbix template for monitoring parameters of MS SQL Server
+Additional Zabbix template for monitoring parameters of MS SQL Server. This template is meant to use with standard "Template DB MSSQL by ODBC".
 
 Format: zabbix 5.0 xml. It should also work on 5.2 and above (see [docs](https://www.zabbix.com/documentation/current/manual/xml_export_import/media) about template formats)
 
