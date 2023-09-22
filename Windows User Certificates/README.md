@@ -2,6 +2,7 @@
 
 Script for monitoring Windows user certificates.
 
+This is an old and not very tidy solution. Sorry. Use it as is.
 
 
 ### Description in Russian:
