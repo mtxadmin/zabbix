@@ -1,8 +1,11 @@
+## Attention: this is an old and not very tidy solution. Sorry. Use it as is.
+
+Maybe sometimes I return to this, but now it is not production-ready at all. I even don't remember which version of three is more or less working. I think, this, but I could be wrong
+
+
 ## User certificates
 
 Script for monitoring Windows user certificates.
-
-This is an old and not very tidy solution. Sorry. Use it as is.
 
 
 ### Description in Russian:
