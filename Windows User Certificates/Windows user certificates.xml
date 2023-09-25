@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2023-09-25T16:42:15Z</date>
+    <groups>
+        <group>
+            <name>ЕОК</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Windows user certificates</template>
+            <name>Windows user certificates</name>
+            <groups>
+                <group>
+                    <name>ЕОК</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>User certificates</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>User Certificates V1</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>usercertificatesV1_json</key>
+                    <delay>1d</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <applications>
+                        <application>
+                            <name>User certificates</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>UserCertificates</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>usercertificates[svc-target-user]</key>
+                    <delay>1h</delay>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) days</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER},Days]</key>
+                            <delay>1d</delay>
+                            <description>Text?</description>
+                            <applications>
+                                <application>
+                                    <name>User certificates</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Days</params>
+                                </step>
+                            </preprocessing>
+                            <trigger_prototypes>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;30</expression>
+                                    <name>Cert UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) is expiring in 30 days</name>
+                                    <priority>HIGH</priority>
+                                </trigger_prototype>
+                                <trigger_prototype>
+                                    <expression>{last()}&lt;60</expression>
+                                    <name>Cert UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) is expiring in 60 days</name>
+                                    <priority>AVERAGE</priority>
+                                    <dependencies>
+                                        <dependency>
+                                            <name>Cert UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) is expiring in 30 days</name>
+                                            <expression>{Windows user certificates:usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER},Days].last()}&lt;30</expression>
+                                        </dependency>
+                                    </dependencies>
+                                </trigger_prototype>
+                            </trigger_prototypes>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) end date</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER},EndDate]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>User certificates</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Days</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) issuer</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER},Issuer]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>User certificates</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Days</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) start date</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER},StartDate]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>User certificates</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Days</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) subject</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER},Subject]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>User certificates</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Days</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>UserCertificate ({#CERT.USER} - {#CERT.SERIAL_NUMBER}) serial number</name>
+                            <type>ZABBIX_ACTIVE</type>
+                            <key>usercertificate.serialnumber[{#CERT.USER},{#CERT.SERIAL_NUMBER}]</key>
+                            <delay>1d</delay>
+                            <trends>0</trends>
+                            <value_type>CHAR</value_type>
+                            <applications>
+                                <application>
+                                    <name>User certificates</name>
+                                </application>
+                            </applications>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.Days</params>
+                                </step>
+                            </preprocessing>
+                        </item_prototype>
+                    </item_prototypes>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#ACTIVE}</lld_macro>
+                            <path>$.Active</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.CONTAINER}</lld_macro>
+                            <path>$.Container</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.DAYS}</lld_macro>
+                            <path>$.Days</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.END_DATE}</lld_macro>
+                            <path>$.EndDate</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.FILENAME}</lld_macro>
+                            <path>$.Filename</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.FULL_FILENAME}</lld_macro>
+                            <path>$.FullFilename</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.ISSUER}</lld_macro>
+                            <path>$.Issuer</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.PROVIDER}</lld_macro>
+                            <path>$.Provider</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.SERIAL_NUMBER}</lld_macro>
+                            <path>$.SerialNumber</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.START_DATE}</lld_macro>
+                            <path>$.StartDate</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.SUBJECT}</lld_macro>
+                            <path>$.Subject</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#CERT.USER}</lld_macro>
+                            <path>$.User</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
