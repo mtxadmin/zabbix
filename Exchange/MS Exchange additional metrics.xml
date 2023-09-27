@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2023-09-27T15:30:00Z</date>
+    <groups>
+        <group>
+            <name>Exchange servers</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>MS Exchange additional metrics</template>
+            <name>MS Exchange additional metrics</name>
+            <description>A set of additional metrics.</description>
+            <groups>
+                <group>
+                    <name>Exchange servers</name>
+                </group>
+            </groups>
+            <applications>
+                <application>
+                    <name>MS Exchange additional metrics</name>
+                </application>
+            </applications>
+            <items>
+                <item>
+                    <name>IMAP active user count</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchangeImap4(_total)\Current Connections&quot;, 1]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MAPI active user count</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchange MapiHttp Emsmdb\Active User Count&quot;, 1]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>MAPI connections count</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchange MapiHttp Emsmdb\Connection Count&quot;, 1]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>POP3 active user count</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchangePop3(_total)\Connections Current&quot;, 1]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>Replication CopyQueueLenght</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchange Replication(_total)\CopyQueueLength&quot;, 60]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(10m)}&gt;500</expression>
+                            <name>Replication CopyQueueLenght &gt; 500 in 10 minutes</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>Replication ReplayQueueLenght</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchange Replication(_total)\ReplayQueueLength&quot;, 60]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                    <triggers>
+                        <trigger>
+                            <expression>{min(10m)}&gt;500</expression>
+                            <name>Replication ReplayQueueLenght &gt; 500 in 10 minutes</name>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <name>SMTP Messages Sent/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchange Submission SmtpSend(_total)\Messages Sent/sec&quot;, 60]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SMTP total send message</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchange Submission SmtpSend(_total)\Messages Sent Total&quot;, 60]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SMTP Messages Received/sec</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchangeTransport SMTPReceive(_total)\Messages Received/sec&quot;, 60]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+                <item>
+                    <name>SMTP total receive message</name>
+                    <type>ZABBIX_ACTIVE</type>
+                    <key>perf_counter_en[&quot;\MSExchangeTransport SMTPReceive(_total)\Messages Received Total&quot;, 60]</key>
+                    <value_type>FLOAT</value_type>
+                    <applications>
+                        <application>
+                            <name>MS Exchange additional metrics</name>
+                        </application>
+                    </applications>
+                </item>
+            </items>
+        </template>
+    </templates>
+</zabbix_export>
