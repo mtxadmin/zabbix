@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2023-10-09T15:10:40Z</date>
+    <groups>
+        <group>
+            <name>Backup Veeam</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Veeam volumes</template>
+            <name>Veeam volumes</name>
+            <groups>
+                <group>
+                    <name>Backup Veeam</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <name>Veeam disks json</name>
+                    <type>TRAP</type>
+                    <key>veeam_disks_json</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                </item>
+                <item>
+                    <name>Total size of backups on server BKP-Server1</name>
+                    <type>TRAP</type>
+                    <key>veeam_total_size[BKP-Server1]</key>
+                    <delay>0</delay>
+                </item>
+                <item>
+                    <name>Total size of backups on server BKP-Server2</name>
+                    <type>TRAP</type>
+                    <key>veeam_total_size[BKP-Server2]</key>
+                    <delay>0</delay>
+                </item>
+                <item>
+                    <name>Total size of backups on server BKP-Server3</name>
+                    <type>TRAP</type>
+                    <key>veeam_total_size[BKP-Server3]</key>
+                    <delay>0</delay>
+                </item>
+                <item>
+                    <name>Total size of backups on server BKP-Server4</name>
+                    <type>TRAP</type>
+                    <key>veeam_total_size[BKP-Server4]</key>
+                    <delay>0</delay>
+                </item>
+                <item>
+                    <name>Total size of backups on server BKP-Server5</name>
+                    <type>TRAP</type>
+                    <key>veeam_total_size[BKP-Server5]</key>
+                    <delay>0</delay>
+                </item>
+                <item>
+                    <name>Veeam volumes json</name>
+                    <type>TRAP</type>
+                    <key>veeam_volumes_json</key>
+                    <delay>0</delay>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                </item>
+            </items>
+            <discovery_rules>
+                <discovery_rule>
+                    <name>Veeam disks discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>veeam_disks_discovery</key>
+                    <delay>0</delay>
+                    <lifetime>1h</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Free space on disk {#NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>free_space_on_disk[{#NAME}]</key>
+                            <delay>0</delay>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.Name=='{#NAME}')].Free_space</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>veeam_disks_json</key>
+                            </master_item>
+                        </item_prototype>
+                        <item_prototype>
+                            <name>Total size of disk {#NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>total_size_of_disk[{#NAME}]</key>
+                            <delay>0</delay>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.Name=='{#NAME}')].Total_size</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>veeam_disks_json</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>veeam_disks_json</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#FREE_SPACE}</lld_macro>
+                            <path>$.Free_space</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NAME}</lld_macro>
+                            <path>$.Name</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#TOTAL_SIZE}</lld_macro>
+                            <path>$.Total_size</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+                <discovery_rule>
+                    <name>Veeam volumes discovery</name>
+                    <type>DEPENDENT</type>
+                    <key>veeam_volumes_discovery</key>
+                    <delay>0</delay>
+                    <lifetime>1h</lifetime>
+                    <item_prototypes>
+                        <item_prototype>
+                            <name>Size of backups {#NAME}</name>
+                            <type>DEPENDENT</type>
+                            <key>veeam_volume[{#NAME}]</key>
+                            <delay>0</delay>
+                            <preprocessing>
+                                <step>
+                                    <type>JSONPATH</type>
+                                    <params>$.[?(@.Name=='{#NAME}')].Backup_size</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>[
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>]
+</params>
+                                </step>
+                                <step>
+                                    <type>STR_REPLACE</type>
+                                    <params>&quot;
+</params>
+                                </step>
+                            </preprocessing>
+                            <master_item>
+                                <key>veeam_volumes_json</key>
+                            </master_item>
+                        </item_prototype>
+                    </item_prototypes>
+                    <master_item>
+                        <key>veeam_volumes_json</key>
+                    </master_item>
+                    <lld_macro_paths>
+                        <lld_macro_path>
+                            <lld_macro>{#BACKUP_SIZE}</lld_macro>
+                            <path>$.Backup_size</path>
+                        </lld_macro_path>
+                        <lld_macro_path>
+                            <lld_macro>{#NAME}</lld_macro>
+                            <path>$.Name</path>
+                        </lld_macro_path>
+                    </lld_macro_paths>
+                </discovery_rule>
+            </discovery_rules>
+        </template>
+    </templates>
+</zabbix_export>
