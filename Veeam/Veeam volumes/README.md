@@ -43,7 +43,9 @@ Add arguments: -NoProfile -ExecutionPolicy Bypass -File "c:\zabbix\scripts\Veeam
 
 8. In the Zabbix web interface, apply the imported template **Veeam volumes** to the host
 
-9. After starting of the scheduled task, see the results ("Size of backups" in Latest data)
+9. Alter server names in Zabbix: BKP-Server1, BKP-Server2, BKP-Server3, etc. to your actual ones.
 
-10. Optionally, you can visualize these data in Grafana<br>
+10. After starting of the scheduled task, see the results ("Size of backups" in Latest data)
+
+11. Optionally, you can visualize these data in Grafana<br>
 Plain graphs: Graph, Metrics, add Veeam hosts, add item "/Size of backups/"
