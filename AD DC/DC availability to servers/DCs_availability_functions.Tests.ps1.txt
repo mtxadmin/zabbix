@@ -1,0 +1,2176 @@
+# Скрипт с тестовыми сценариями для DCs_availability_functions.ps1
+
+# Для запуска тестов используйте встроенный в Powershell командлет Invoke-Pester. https://pester.dev/docs/quick-start
+# Тестовые сценарии добавляйте сюда в этот DCs_availability_functions.Tests.ps1. Можно вместо Invoke-Pester просто запускать этот DCs_availability_functions.Tests.ps1
+
+# Забавно, что объем сценариев тестирования в разы больше самого тестируемого функционала :-)
+
+# Update: уже изначально чрезвычайно помогло в выискивании разных ошибок, от простых до очень неочевидных. Тесты рулят.
+
+
+$root = $PSScriptRoot  # for debug
+. $root\DCs_availability_functions.ps1  # подгружаем файл, функции которого сейчас будем тестировать
+
+
+Describe "Когда всё хорошо" {
+    # Самый простой и прямолинейный случай, ага. Не продакшн с его дублированием, но протестировать стоит
+    It "Два контроллера в домене, все порты ок" {
+        $TestResults = @(); $GeneralTestResult = $null
+        $TestResult = New-Object -TypeName DCPortsArray
+        # имя хоста для тестов необязательно, но пусть будет
+        # В принципе, для вкусовщины в тексты событий можно добавлять имя хоста. Тогда это значение будет необходимым.
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        # Обратите внимание, на pester.dev по умолчанию пишут Should -Be . Это чуть более новый синтаксис, но это и практически все изменения.
+        # По умолчанию, во всех пауэршеллах, которые я видел, идёт предыдущая версия, но отличия там минимальны. Если Майкрософт обновит версию, изменить будет легко.
+        $GeneralTestResult.StatusCode | Should Be 0
+        $GeneralTestResult.StatusDescription | Should Be "OK"
+    }
+
+    # Аналогично, но уже реально. Уже всё по-взрослому
+    It "Два контроллера в домене, все порты ок" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 0
+        $GeneralTestResult.StatusDescription | Should Be "OK"
+    }
+
+    # Ну и три проверим и успокоимся. Дальше продолжать эту ветку можно, но смысла никакого
+    It "Три контроллера в домене, все порты ок" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        # для разнообразия возьмем контроллеры другого домена
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 0
+        $GeneralTestResult.StatusDescription | Should Be "OK"
+    }
+}
+
+
+
+Describe "Недоступен один и тот же порт на всех контроллерах, остальные порты ок" {
+    # Ну, опять же, начнём с одного
+    # Да, в этом случае странно писать "недоступен порт на всех контроллерах". Но предлагаю так сделать для унификации, чтобы не переусложнять
+    # Не хочется копипастить эти блоки десяток раз. Но раз уж мы начали в тесты, давайте тестировать всё от и до
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 53 - DNS)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 53 (DNS) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 88 - Kerberos authentication)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 88 (Kerberos authentication) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 135 - RPC)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 135 (RPC) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 389 - LDAP)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 389 (LDAP) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 445 - SMB)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 445 (SMB) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 464 - Kerberos password change)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 464 (Kerberos password change) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 636 - LDAP SSL)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 636 (LDAP SSL) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 3268 - Global catalog)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3268 (Global catalog) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 3269 - Global catalog)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3269 (Global catalog) на всех контроллерах домена"
+    }
+    It "Один контроллер в домене, недоступен один порт на каждом (TCP 9369 - Веб-службы Active Directory (ADWS))" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 9369 (Веб-службы Active Directory (ADWS)) на всех контроллерах домена"
+    }
+
+
+    # Теперь нас ждут увлекательные приключения уже с двумя контроллерами
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 53 - DNS)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 53 (DNS) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 88 - Kerberos authentication)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 88 (Kerberos authentication) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 135 - RPC)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 135 (RPC) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 389 - LDAP)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 389 (LDAP) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 445 - SMB)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 445 (SMB) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 464 - Kerberos password change)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 464 (Kerberos password change) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 636 - LDAP SSL)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 636 (LDAP SSL) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 3268 - Global catalog)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3268 (Global catalog) на всех контроллерах домена"
+    }
+    It "Два контроллера в домене, недоступен один порт на каждом (TCP 3269 - Global catalog)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3269 (Global catalog) на всех контроллерах домена"
+    }
+
+    # Ну и три для полного счастья. Дальше продолжать смысла нет, опять же
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 53 - DNS)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 53 (DNS) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 88 - Kerberos authentication)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 88 (Kerberos authentication) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 135 - RPC)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 135 (RPC) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 389 - LDAP)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 389 (LDAP) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 445 - SMB)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 445 (SMB) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 464 - Kerberos password change)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 464 (Kerberos password change) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 636 - LDAP SSL)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 636 (LDAP SSL) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 3268 - Global catalog)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3268 (Global catalog) на всех контроллерах домена"
+    }
+    It "Три контроллера в домене, недоступен один порт на каждом (TCP 3269 - Global catalog)" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr01.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr02.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcbr03.branch.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3269 (Global catalog) на всех контроллерах домена"
+    }
+}
+
+
+
+Describe "Недоступны все порты на одном из контроллеров" {
+    It "Один контроллер в домене, недоступны все порты на одном из контроллеров" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2  # Если контроллер один, и тот недоступен, то это паника-паника
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на всех контроллерах домена, хотя пинги идут"
+        # Да, этот случай будет подпадать под "все контроллеры домена", хотя формулировка и шероховатая.
+        # Не хочу добавлять условий просто чтобы зашлифовать формулировку про этот не особо реалистичный вариант с единственным контроллером
+    }
+
+    It "Два контроллера в домене, недоступны все порты на первом контроллере, на втором всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dcho01.headoffice.corp.local, хотя пинги идут"
+    }
+    It "Два контроллера в домене, недоступны все порты на втором контроллере, на первом всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw01.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw02.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dcsw02.sw.corp.local, хотя пинги идут"
+    }
+    # Вариант, когда на обоих контроллерах недоступен один и тот же порт - это статус 2 (паника-паника) и тестится в соседней ветке
+
+
+    # Ну и три контроллера. Все-все случаи расписывать не стоит, достаточно наметить ключевые точки
+    It "Три контроллера в домене, недоступны все порты на первом контроллере, на остальных всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho03.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dcho01.headoffice.corp.local, хотя пинги идут"
+    }
+    It "Три контроллера в домене, недоступны все порты на втором контроллере, на остальных всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dc-d02.datacenter.corp.local, хотя пинги идут"
+    }
+    It "Три контроллера в домене, недоступны все порты на третьем контроллере, на остальных всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dc-d03.datacenter.corp.local, хотя пинги идут"
+    }
+
+
+    # Ну и для разнообразия случаи, когда один контроллер недоступен полностью, другие частично - но полного отказа ни по одному порту нет
+    It "Три контроллера в домене, недоступны все порты на первом контроллере, на остальных нет полного отказа ни по одному из портов" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dc-d01.datacenter.corp.local, хотя пинги идут"
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный сервер, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про отдельные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    It "Три контроллера в домене, недоступны все порты на втором контроллере, на остальных нет полного отказа ни по одному из портов" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dc-d02.datacenter.corp.local, хотя пинги идут"
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный сервер, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про отдельные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    It "Три контроллера в домене, недоступны все порты на третьем контроллере, на остальных нет полного отказа ни по одному из портов" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на контроллере dc-d03.datacenter.corp.local, хотя пинги идут"
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный сервер, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про отдельные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+}
+
+
+
+Describe "Недоступна часть портов на одном или нескольких контроллерах" {
+    # Случай с одним контроллером не рассматриваем - это полный отказ по порту и тестируется в соседней ветке
+
+    It "Два контроллера в домене, недоступна часть портов на первом контроллере, на первом всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw01.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw02.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 135 (RPC) на контроллере dcsw01.sw.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    It "Два контроллера в домене, недоступна часть портов на втором контроллере, на первом всё доступно" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw01.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw02.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 53 (DNS) на контроллере dcsw02.sw.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    # Вариант, когда на обоих контроллерах недоступен один и тот же порт - это статус 2 (паника-паника) и тестится в соседней ветке
+
+
+    It "Два контроллера в домене, на них недоступны часть портов, но полного отказа по портам нет" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw01.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw02.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 445 (SMB) на контроллере dcsw01.sw.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    It "Два контроллера в домене, на них недоступны часть портов, но полного отказа по портам нет" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw01.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcsw02.sw.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 636 (LDAP SSL) на контроллере dcsw01.sw.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+
+
+    It "Три контроллера в домене, на них недоступны часть портов, но полного отказа по портам нет" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 3268 (Global catalog) на контроллере dc-d01.datacenter.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    It "Три контроллера в домене, на них недоступны часть портов, но полного отказа по портам нет" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 53 (DNS) на контроллере dc-d02.datacenter.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+    It "Три контроллера в домене, на них недоступны часть портов, но полного отказа по портам нет" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 0
+        $TestResult.StatusTCP88 = 0
+        $TestResult.StatusTCP135 = 0
+        $TestResult.StatusTCP389 = 0
+        $TestResult.StatusTCP445 = 0
+        $TestResult.StatusTCP464 = 0
+        $TestResult.StatusTCP636 = 0
+        $TestResult.StatusTCP3268 = 0
+        $TestResult.StatusTCP3269 = 0
+        $TestResult.StatusTCP9369 = 0
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 1
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступен порт TCP 88 (Kerberos authentication) на контроллере dc-d02.datacenter.corp.local"
+        # Алерт приходит по первому сбойному контроллеру в списке, по первому недоступному порту по порядку
+        # В данном конкретном сценарии мы не ждем, что от мониторинга будет прямо полное перечисление портов.
+        # Достаточно того, что админы поднимут сбойный порт, а потом, если они не увидят другие сбои, мониторинг будет рапортовать про остальные порты по порядку.
+        # Да, не идеально, но вполне работоспособно и при этом сохранит код от раздувания
+    }
+
+
+}
+
+
+
+Describe "Недоступны все порты на всех контроллерах" {
+    # Инвертированная копия варианта "всё хорошо"
+    # В функции обработки проверяется вторым, сразу после варианта "всё хорошо". Порядок же в тестах неважен
+    It "Один контроллер в домене, все порты недоступны" {
+        $TestResults = @(); $GeneralTestResult = $null
+        $TestResult = New-Object -TypeName DCPortsArray
+        # имя хоста для тестов необязательно, но пусть будет
+        # В принципе, для вкусовщины в тексты событий можно добавлять имя хоста. Тогда это значение будет необходимым.
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        # Обратите внимание, на pester.dev по умолчанию пишут Should -Be . Это чуть более новый синтаксис, но это и практически все изменения.
+        # По умолчанию, во всех пауэршеллах, которые я видел, идёт предыдущая версия, но отличия там минимальны. Если Майкрософт обновит версию, изменить будет легко.
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на всех контроллерах домена, хотя пинги идут"
+        # Опять же, в этом случае странно писать "недоступен порт на всех контроллерах". Но предлагаю так сделать для унификации, чтобы не переусложнять
+    }
+
+    # Аналогично, но уже реально. Уже всё по-взрослому
+    It "Два контроллера в домене, все порты недоступны" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho01.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dcho02.headoffice.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на всех контроллерах домена, хотя пинги идут"
+    }
+
+    # Ну и три проверим и успокоимся. Дальше продолжать эту ветку можно, но смысла никакого
+    It "Три контроллера в домене, все порты недоступны" {
+        $TestResults = @(); $GeneralTestResult = $null
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        # для разнообразия возьмем контроллеры другого домена
+        $TestResult.DCName = "dc-d01.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d02.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $TestResult = New-Object -TypeName DCPortsArray
+        $TestResult.DCName = "dc-d03.datacenter.corp.local"
+        # Ноль = ок
+        $TestResult.StatusTCP53 = 1
+        $TestResult.StatusTCP88 = 1
+        $TestResult.StatusTCP135 = 1
+        $TestResult.StatusTCP389 = 1
+        $TestResult.StatusTCP445 = 1
+        $TestResult.StatusTCP464 = 1
+        $TestResult.StatusTCP636 = 1
+        $TestResult.StatusTCP3268 = 1
+        $TestResult.StatusTCP3269 = 1
+        $TestResult.StatusTCP9369 = 1
+        $TestResults += $TestResult
+
+        $GeneralTestResult = FormGeneralResult($TestResults)
+
+        # Собственно, пестеровские проверки. Две - проверяем код и проверяем текст
+        $GeneralTestResult.StatusCode | Should Be 2
+        $GeneralTestResult.StatusDescription | Should Be "От сервера недоступны все порты на всех контроллерах домена, хотя пинги идут"
+    }
+}
+

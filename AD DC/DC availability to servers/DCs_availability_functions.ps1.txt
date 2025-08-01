@@ -1,0 +1,640 @@
+#Requires -Version 5
+
+# Там можно и со старым синтаксисом, но с классами удобнее. Они появились в PS5 (в 2016-02 на 2012 R2) и уже давно везде 5.1 (2017-01 для всех от 2008 R2 SP1)
+# Плюс, Pester (давно встроенный в Powershell) требует PS3 (от 2008), но я бы закладывался на пятую версию.
+# Если найдутся совсем древние сервера, ну, по-хорошему, надо их обновлять
+
+# Для запуска тестов используйте встроенный в Powershell командлет Invoke-Pester. https://pester.dev/docs/quick-start
+# Можно вверх добавить проверку на наличие этого модуля: #Requires -Modules Pester
+# Хотя, тестирование нужно только на админских и тестовых машинах, на конечных хостах наличие модуля (хотя и давно встроенного в Windows Powershell) не обязательно.
+# Тестовые сценарии смотрите и добавляйте в DCs_availability.Tests.ps1 рядом. Можно вместо Invoke-Pester просто открывать и запускать DCs_availability.Tests.ps1
+
+# Update: уже изначально чрезвычайно помогло в выискивании разных ошибок, от простых до очень неочевидных. Тесты рулят.
+
+
+
+# $true для отладки. Там почему-то вывод Write-Host весь идёт в заббикс, странно. Убрал под условие с этой переменной
+$Debug = $false
+#$Debug = $true
+
+
+# Класс для номеров и описаний портов
+class Port {
+    [int]$PortNumber
+    [string]$PortDescription
+}
+
+# Класс для значения и описания возвращаемого статуса
+class ExitStatus {
+    [int]$StatusCode
+    [string]$StatusDescription
+}
+
+#
+class DCPortsArray {
+    [string]$DCName
+    # Тут напрашивается boolean, но мне не понравилось, как это выглядит. Пусть будет int с 0 и 1
+    [int]$StatusTCP53
+    [int]$StatusTCP88
+    [int]$StatusTCP135
+    #[int]$StatusTCP137
+    #[int]$StatusTCP138
+    [int]$StatusTCP389
+    [int]$StatusTCP445
+    [int]$StatusTCP464
+    [int]$StatusTCP636
+    [int]$StatusTCP3268
+    [int]$StatusTCP3269
+    [int]$StatusTCP9369
+
+}
+
+
+
+# Отправку статуса заворачиваем в функцию. Ну, чтобы всё держать в едином месте, а не размазывать по коду
+# На входе - объект определенного выше класса ExitStatus
+# Эту функцию тестировать не предполагал, но, в принципе, можно туда добавить проверок на доступность заббикса.
+# Хотя это и не имеет большого смысла - если Заббикс ляжет, куда отправлять данные о том, что он лежит? :-)
+# В общем, функция не для тестирования, а для только для собирания кода в кучку.
+#function SendOutStatus ([ExitStatus]$Status) {
+    # Тут трапы, в общем. Две штуки - код и описание
+    # Update: концепция изменилась, будут юзерпараметры. Ну, значит функция вообще не имеет смысла, комментируем всё для истории - вдруг придется на трапы переходить
+#}
+
+
+
+
+cls
+
+# Массив проверяемых номеров портов и их описаний
+# Для упрощения, список портов слегка прибьем гвоздями. При добавлении или изменении надо будет менять в двух местах - здесь, и в функции ниже
+# Изначально, я хотел сделать гибкую структуру с возможностью менять/добавлять в одном месте. Но, в общем, пришлось захардкодить. Ладно, список портов будет меняться не каждый год.
+$Ports = @()
+$Port = New-Object -TypeName Port; $Port.PortNumber = 53;   $Port.PortDescription = "DNS";                      $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 88;   $Port.PortDescription = "Kerberos authentication";  $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 135;  $Port.PortDescription = "RPC";                      $Ports += $Port
+# Порты 137 и 138 недоступны везде. Ну и норм.
+#$Port = New-Object -TypeName Port; $Port.PortNumber = 137;  $Port.PortDescription = "NetBIOS";                  $Ports += $Port
+#$Port = New-Object -TypeName Port; $Port.PortNumber = 138;  $Port.PortDescription = "NetBIOS";                  $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 389;  $Port.PortDescription = "LDAP";                     $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 445;  $Port.PortDescription = "SMB";                      $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 464;  $Port.PortDescription = "Kerberos password change"; $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 636;  $Port.PortDescription = "LDAP SSL";                 $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 3268; $Port.PortDescription = "Global catalog";           $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 3269; $Port.PortDescription = "Global catalog";           $Ports += $Port
+$Port = New-Object -TypeName Port; $Port.PortNumber = 9369; $Port.PortDescription = "Веб-службы Active Directory (ADWS)";  $Ports += $Port
+
+
+
+## Список контроллеров домена в зависимости от домена.
+
+# Перед добавлением, пингуем каждый контроллер. Если какой-то совсем недоступен, не добавляем его в список и ничего не делаем - полагаемся на стандартные проверки мониторинга.
+# Данное решение не предполагает замену стандартных проверок, а лишь старается гибко дополнять их
+
+# Блин, 20 секунд на пинги - как-то ну много. Сокращать количество не хочется, но возиться с распараллеливанием - еще хуже и оно того не стоит здесь. Сократил вдвое, 10 сек - приемлемо
+# Update: не, реально полное время получается около 25 сек, это прямо на грани. Сократил проверки до одной, теперь 15 сек.
+# Можно было бы формировать массив как есть, и проверять потом, удаляя полностью недоступные постфактум, но обычный Array этого не позволяет, только ArrayList, а там чуть по-другому. Давайте проще.
+# Update: можно удалять из массива так: $DCs = $DCs -ne $DC . Но всё же лучше сразу
+
+
+# Ну и да, и этот блок тоже (см. ниже) завернем в функцию и будем тестировать.
+function GetDCs($DomainName) {
+    $DCs = @()  # инициализируем массив
+    switch ($DomainName.ToLower()) {  # для удобства, все сравнения делаем в нижнем регистре
+        "branch.corp.local" {
+            $DC = "dcbr01.branch.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcbr02.branch.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcbr03.branch.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcbr04.branch.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcbr05.branch.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcbr06.branch.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        "dmz.local" {
+            $DC = "dcdmz01.dmz.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcdmz02.dmz.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        "headoffice.corp.local" {
+            $DC = "dcho01.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho02.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho03.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho04.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho05.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho06.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            # чисто для быстрого теста, проверка случая недоступности одного контроллера. Всё работает как надо, он не попадает в список
+            #$DC = "dcho00.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            # Update 2023-11:
+            $DC = "dcho07.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho08.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho09.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho10.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho11.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcho12.headoffice.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        "datacenter.corp.local" {
+            $DC = "dc-d01.datacenter.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dc-d02.datacenter.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dc-d03.datacenter.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        "ms.ru" {
+            $DC = "ms-dc01.ms.ru"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "ms-dc02.ms.ru"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        "sw.corp.local" {
+            $DC = "dcsw01.sw.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dcsw02.sw.corp.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        "ds.local" {
+            $DC = "dsmain.ds.local"; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+            $DC = "dsres.ds.local" ; if (Test-Connection $DC -Count 1) { $DCs += $DC }
+        }
+        default {
+            # Какой-то новый/неизвестный домен. Паникуем, выходим
+        }
+
+    }
+
+    # Just for debug: print DCs on the screen
+    if ($Debug) {
+        Write-Host "DCs:" -ForegroundColor Cyan
+        $DCs | % { Write-Host $_ }
+    }
+
+    # Return value
+    $DCs
+}
+
+
+
+# Отлично, есть список контроллеров. Запускаем проверки портов в цикле
+# Update: блок преобразован в функцию - а изначально комментировался линейный процесс.
+# То есть, теперь получение списка контроллеров фактически запускается из файла DCs_availability.ps1, но в целом-то процесс без изменений
+
+# Сбор данных о состоянии контроллеров тоже заворачиваем в функцию.
+# Это для тестов через Pester, чтобы подсовывать в сценариях тестирования различные данные без того, чтобы блокировать порты реально
+
+# Функция берет на входе список контроллеров, на выходе возвращает массив с контроллерами и их портами.
+# Да, вот в этом месте нетривиально, но это позволит избавиться в дальнейшем от головной боли по проверке корректности функционирования и сильно облегчит дальнейшее изменение скрипта
+# См. DCs_availability.Tests.ps1 рядом. Для справки, .Tests.ps1 - стандартный суффикс Pester. См. https://pester.dev/docs/quick-start
+# Вся логика по обработке значений - не здесь, а в этой функции просто опрос и фиксация данных
+# Update: уже изначально чрезвычайно помогло в выискивании разных ошибок, от простых до очень неочевидных. Тесты рулят.
+function GetDCStatuses ($DCs) {
+    $Results = @()
+
+    $DCs | % {  # цикл по контроллерам
+        $DC = $_  # текущий проверяемый контроллер
+
+        $Result = New-Object -TypeName DCPortsArray
+        $Result.DCName = $DC
+
+        # Изначально тут предполагался цикл по портам. Однако я немного завяз с форматом результатов.
+        # В общем, в качестве быстрого решения порты сейчас просто проверяются по одному. Для десятка штук это не критично.
+        # Костыль, увы. Но зато тестирование будет нормально
+
+        #$Ports | % {  # цикл по портам
+
+        if ($Debug) { Write-Host "Testing ports" -ForegroundColor Cyan }
+
+        # Ноль = ок
+
+        if ($Debug) { Write-Host ("$DC - testing port 53") }
+        if (Test-NetConnection -ComputerName $DC -Port 53) {
+            $Result.StatusTCP53 = 0
+        } else {
+            $Result.StatusTCP53 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 88") }
+        if (Test-NetConnection -ComputerName $DC -Port 88) {
+            $Result.StatusTCP88 = 0
+        } else {
+            $Result.StatusTCP88 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 135") }
+        if (Test-NetConnection -ComputerName $DC -Port 135) {
+            $Result.StatusTCP135 = 0
+        } else {
+            $Result.StatusTCP135 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 389") }
+        if (Test-NetConnection -ComputerName $DC -Port 389) {
+            $Result.StatusTCP389 = 0
+        } else {
+            $Result.StatusTCP389 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 445") }
+        if (Test-NetConnection -ComputerName $DC -Port 445) {
+            $Result.StatusTCP445 = 0
+        } else {
+            $Result.StatusTCP445 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 464") }
+        if (Test-NetConnection -ComputerName $DC -Port 464) {
+            $Result.StatusTCP464 = 0
+        } else {
+            $Result.StatusTCP464 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 636") }
+        if (Test-NetConnection -ComputerName $DC -Port 636) {
+            $Result.StatusTCP636 = 0
+        } else {
+            $Result.StatusTCP636 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 3268") }
+        if (Test-NetConnection -ComputerName $DC -Port 3268) {
+            $Result.StatusTCP3268 = 0
+        } else {
+            $Result.StatusTCP3268 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 3269") }
+        if (Test-NetConnection -ComputerName $DC -Port 3269) {
+            $Result.StatusTCP3269 = 0
+        } else {
+            $Result.StatusTCP3269 = 1
+        }
+        if ($Debug) { Write-Host ("$DC - testing port 9369") }
+        if (Test-NetConnection -ComputerName $DC -Port 9369) {
+            $Result.StatusTCP9369 = 0
+        } else {
+            $Result.StatusTCP9369 = 1
+        }
+
+
+        $Results += $Result
+    }
+
+    # Return value
+    $Results
+}
+
+
+<# Формат данных:
+DCName        : dcho01.headoffice.corp.local
+StatusTCP53   : 0
+StatusTCP88   : 0
+StatusTCP135  : 0
+StatusTCP389  : 0
+StatusTCP445  : 0
+StatusTCP464  : 0
+StatusTCP636  : 0
+StatusTCP3268 : 0
+StatusTCP3269 : 0
+#>
+
+
+# Наконец-то, обрабатываем собранные (или подсунутые тестовые) данные
+# В этом месте нам нужна немного продвинутая логика. Пачка сообщений о недоступности порта на контроллере 1, контроллере 2, контроллере 3 ... - вместо этого, в идеале, нужно консолидированное письмо
+# Изменять - не боимся. После каждого изменения просто запускаем Invoke-Pester и убеждаемся, что ничего не поломали в процессе. Офигенно же, Test-Driven Development, ну
+# Блок определения общего статуса и сообщения к нему, опять же, обертываем в функцию - опять же, для удобства тестирования.
+# Функция на входе получает массив хостов и состояния портов на них, и каким-то образом формирует результирующий общий код состояния и текст.
+# Вот этот функционал самый спорный, и ради подробного и плотного тестирования и затевалась выше вся усложненная структура.
+
+# Внимание: при изменениях, сначала описываем тестовый сценарий - то, что мы хотим получить - в файле DCs_availability.Tests.ps1
+# Прогоняем тесты, смотрим, что не так, и подгоняем результат под заранее желаемый. И смотрим, что прежние результаты, зафиксированные в тестах, при этом не отвалились. TDD во все поля, уии
+
+function FormGeneralResult ($Results) {
+    # Погнали реализовывать обработку.
+    # Объект с кодом и описанием ошибки во всех случаях будет нужен, так что вынесем его из веток
+    $ExitStatus = New-Object -TypeName ExitStatus
+
+    # Первый, самый простой и прямолинейный случай - если всё везде ок
+    $all_ports_are_ok_flag = $true
+    $Results | % {
+        $Result = $_
+        if ($Result.StatusTCP53   -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP88   -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP135  -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP389  -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP445  -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP464  -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP636  -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP3268 -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP3269 -ne 0) { $all_ports_are_ok_flag = $false }
+        if ($Result.StatusTCP9369 -ne 0) { $all_ports_are_ok_flag = $false }
+    }
+    if ($all_ports_are_ok_flag) {
+        $ExitStatus.StatusCode = 0
+        $ExitStatus.StatusDescription = "OK"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+
+
+    # Инвертированная копия варианта "всё хорошо"
+    # Должен быть вторым - после самого вероятного, что всё ОК. Если вообще всё недоступно, надо так и сказать, а не случайно натыкаться на ветку с частичной проверкой.
+    # Понятно, что тесты это сразу выявят, но лучше сказать об этом дополнительно.
+    $all_ports_are_not_ok_flag = $true
+    $Results | % {
+        $Result = $_
+        if ($Result.StatusTCP53   -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP88   -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP135  -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP389  -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP445  -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP464  -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP636  -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP3268 -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP3269 -ne 1) { $all_ports_are_not_ok_flag = $false }
+        if ($Result.StatusTCP9369 -ne 1) { $all_ports_are_not_ok_flag = $false }
+    }
+    if ($all_ports_are_not_ok_flag) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступны все порты на всех контроллерах домена, хотя пинги идут"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+
+
+    # Более сложный случай: недоступен один порт на всех контроллерах, в остальном всё ок
+    # Тут придется разбирать каждый из десятка портов. Вот я хотел избавиться от такого копипаста, через циклы, но сходу не получилось.
+
+    $port_is_down_everywhere = $true
+    # Чуть финт ушами для сокращения объёма
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 53 (DNS) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 88 (Kerberos authentication) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 135 (RPC) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 389 (LDAP) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 445 (SMB) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 464 (Kerberos password change) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 636 (LDAP SSL) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 3268 (Global catalog) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 3269 (Global catalog) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+    $port_is_down_everywhere = $true
+    if ($port_is_down_everywhere) {$Results.StatusTCP53   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP88   | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP135  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP389  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP445  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP464  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP636  | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3268 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP3269 | ? {if ($_ -ne 0) {$port_is_down_everywhere = $false}}}
+    if ($port_is_down_everywhere) {$Results.StatusTCP9369 | ? {if ($_ -ne 1) {$port_is_down_everywhere = $false}}}
+    # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+    if ($port_is_down_everywhere) {
+        $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+        $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 9369 (Веб-службы Active Directory (ADWS)) на всех контроллерах домена"
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+
+
+    # Недоступны все порты на одном из контроллеров
+    # (Все порты на всех контроллерах уже проверяли, теперь более частный случай)
+    # А вот тут, наконец-то, можно сделать через цикл
+    # Тут засада: с циклом по % (ForEach-Object) return выходит из цикла, а не из функции, блин. С foreach всё так же, если что
+    # И никакой возможности, чтобы выйти именно из функции нет.
+    # Интересно, что я отловил эту сложнодиагностируемую логическую ошибку именно на тестах. Тесты рулят.
+    $exit_flag = $false  # ладно, сделаем костылик в виде флага
+    $Results | % {
+        if (-not $exit_flag) {
+            $Result = $_
+            $all_ports_are_down_on_the_server = $true
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP53 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP88 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP135 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP389 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP445 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP464 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP636 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP3268 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP3269 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            if ($all_ports_are_down_on_the_server) {if ($Result.StatusTCP9369 -ne 1) {$all_ports_are_down_on_the_server = $false}}
+            # Если флаг остался неизмененным, то произошел как раз этот описанный случай
+            if ($all_ports_are_down_on_the_server) {
+                if ($Results.Count -gt 1) {
+                    $ExitStatus.StatusCode = 1  # 1 - ошибка, 2 - паника-паника
+                } else {
+                    $ExitStatus.StatusCode = 2  # 1 - ошибка, 2 - паника-паника
+                }
+                $ExitStatus.StatusDescription = "От сервера недоступны все порты на контроллере " + $Result.DCName + ", хотя пинги идут"
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # внимание, тут Powershell выходит из цикла, а не из функции. Да, неочевидно.
+            }
+        }
+    }
+    if ($exit_flag) {  # завершение костылика выхода
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+
+
+
+    # Недоступен один из портов, но полного отказа нет
+    # Все более глобальные варианты проверили выше, они не случились.
+    # Поэтому просто перебираем контроллеры по списку и порты по списку, и возвращаем первый недоступный
+    # Тут такая же засада с выходом, как и выше, и тоже впилим тот же костылик с флагом
+    $exit_flag = $false  # костылик в виде флага
+    $Results | % {
+        # Выходим по первому сбою
+        if (-not $exit_flag) {
+            $Result = $_
+            if ($Result.StatusTCP53   -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 53 (DNS) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP88   -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 88 (Kerberos authentication) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP135  -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 135 (RPC) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP389  -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 389 (LDAP) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP445  -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 445 (SMB) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP464  -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 464 (Kerberos password change) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP636  -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 636 (LDAP SSL) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP3268 -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 3268 (Global catalog) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP3269 -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 3269 (Global catalog) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }
+            if ($Result.StatusTCP9369 -ne 0) {
+                $ExitStatus.StatusCode = 1
+                $ExitStatus.StatusDescription = "От сервера недоступен порт TCP 9369 (Веб-службы Active Directory (ADWS)) на контроллере " + $Result.DCName
+                $exit_flag = $true  # продолжение костылика выхода. Должно быть перед return
+                return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+            }        }
+    }
+    if ($exit_flag) {  # завершение костылика выхода
+        return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+    }
+
+    # В самом конце: Ну, если совсем ничего не нашли, то ОК, но это как-то странно, поскольку этот случай должен пойматься первым делом.
+    # На всякий случай обозначим ошибку в описании
+    $ExitStatus.StatusCode = 3  # 1 - ошибка, 2 - паника-паника. Тут для отладки 3 - очень так продуктивно получилось
+    $ExitStatus.StatusDescription = "OK?"
+    return $ExitStatus  # возвращаем значение, выходим, в дальнейшей обработке не участвуем
+}
+
