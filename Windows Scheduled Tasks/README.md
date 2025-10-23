@@ -56,7 +56,7 @@ Of course, this list is incomplete. Please, feel free to make an issue or pull r
 Powershell script based on:<br>
 https://github.com/Iakim/zabbix-scheduledtask<br>
 https://github.com/romainsi/zabbix-scheduledtask<br>
-First one is a fork of the second one, but they have defferences in both ways. So I have to make the upgraded and refactored version. For instance, this version can safely operate with non-ASCII task names
+First one is a fork of the second one, but they have differences in both ways. So I have to make the upgraded and refactored version. For instance, this version can safely operate with non-ASCII task names
 
 Task Scheduler error codes:<br>
 https://docs.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-error-and-success-constants
