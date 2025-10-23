@@ -9,7 +9,7 @@ Tested with agent1 and agent2 as well
 ## Using
 
 Use cases:
-- Detecting of failing of a tasks (with technical exclusions, see below)
+- Detecting of failing of tasks (with technical exclusions, see below)
 - Detecting of disabling of a task
 - If you want to detect enabling of a task, add a trigger prototype for that
 
